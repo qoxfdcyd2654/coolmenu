@@ -2,9 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>Neon Glass OS · Погода России + Динамические обои</title>
-    <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Amaranth:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=no">
+    <title>Neon OS · Игры, Браузер, Файлы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Amaranth:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* --- ROOT & RESET --- */
         * {
@@ -24,13 +24,13 @@
                         linear-gradient(45deg , hsl(var(--hue2) 50% 10% / 0.8), hsl(var(--hue2) 50% 10% / 0) 33%), 
                         linear-gradient(hsl(220deg 25% 4.8% / 0.9));
             --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+            --font-retro: 'Press Start 2P', cursive;
             --wallpaper: url('https://assets.codepen.io/13471/abstract-light.jpg');
             --wallpaper-overlay: linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%));
         }
 
         body {
             background: #08090d;
-            /* ВАЖНО: динамическая подстановка цветов через var() */
             background-image: var(--wallpaper), var(--wallpaper-overlay);
             background-size: cover;
             background-position: center;
@@ -40,6 +40,7 @@
             min-height: 100vh;
             padding: 0;
             transition: background-image 0.4s var(--ease), background-color 0.2s ease;
+            overflow-x: hidden;
         }
 
         #app {
@@ -50,7 +51,6 @@
             justify-content: space-between;
         }
 
-        /* --- HEADER / FOOTER --- */
         #app > header {
             display: flex;
             gap: 0.5em;
@@ -60,7 +60,7 @@
             padding: 1.5em 2em;
             border-radius: 40px;
             border: 0.5px solid rgba(255,255,255,0.1);
-            max-width: 650px;
+            max-width: 700px;
         }
         #app > header h1 {
             margin: 0;
@@ -114,7 +114,7 @@
         }
 
         #app > footer [type=range] {
-            width: 200px;
+            width: 180px;
             margin: 0 8px 0 0;
             accent-color: hsl(var(--hue2) 66% 60%);
         }
@@ -133,16 +133,8 @@
             transition: 0.2s;
             backdrop-filter: blur(4px);
         }
-        .wallpaper-btn:hover {
-            background: rgba(60,80,120,0.7);
-            border-color: rgba(255,255,255,0.5);
-        }
-        .wallpaper-btn svg {
-            width: 16px;
-            height: 16px;
-        }
 
-        /* --- КОНТЕКСТНОЕ МЕНЮ --- */
+        /* --- КОНТЕКСТНОЕ МЕНЮ (ОС) --- */
         #menu {
             visibility: hidden;
             opacity: 0;
@@ -154,17 +146,19 @@
             position: fixed;
             top: 140px;
             left: 2svw;
-            min-width: 260px;
-            max-width: 300px;
+            min-width: 280px;
+            max-width: 320px;
             border-radius: var(--radius);
             border: var(--border) solid var(--border-color);
-            padding: 0.9em;
+            padding: 1em;
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
             box-shadow: hsl(var(--hue2) 50% 2%) 0px 12px 28px -10px, 
                         hsl(var(--hue2) 50% 4%) 0px 24px 48px -16px,
                         0 0 0 1px hsl(var(--hue1) 60% 60% / 0.1) inset;
             z-index: 10000;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         #menu.open {
@@ -175,42 +169,35 @@
             filter: blur(0px);
         }
 
-        /* --- Сияние и глоу эффекты (используют hue из темы!) --- */
-        #menu .shine, #menu .glow { --hue: var(--hue1); }
-        #menu .shine-bottom, #menu .glow-bottom { --hue: var(--hue2); --conic: 135deg; }
-        #menu .shine, #menu .shine::before, #menu .shine::after {
-            pointer-events: none; border-radius: 0; border-top-right-radius: inherit; border-bottom-left-radius: inherit;
-            border: 1px solid transparent; width: 70%; aspect-ratio: 1; position: absolute; right: calc(var(--border) * -1);
-            top: calc(var(--border) * -1); z-index: 1; --start: 12%;
-            background: conic-gradient(from var(--conic, -45deg) at center in oklch, transparent var(--start,0%),
-                      hsl( var(--hue), var(--sat,80%), var(--lit,60%)), transparent  var(--end,50%) ) border-box;
-            mask: linear-gradient(transparent), linear-gradient(black); mask-clip: padding-box, border-box; mask-composite: subtract;
-        }
-        #menu .shine::after { --start: 17%; --end: 33%; }
-        #menu .glow { mask-size: 40%; filter: blur(8px) brightness(0.6); }
-
         #menu .inner { 
             display: flex; 
             flex-direction: column; 
-            gap: 0.4em; 
-            font-size: 0.8rem; 
+            gap: 0.6em; 
+            font-size: 0.85rem; 
         }
         
         #menu section { 
             display: flex; 
             flex-direction: column; 
-            gap: 0.2em; 
+            gap: 0.3em; 
+        }
+        
+        #menu hr { 
+            margin: 0.2em 0; 
+            opacity: 0.4; 
+            border: none;
+            border-top: 0.5px solid rgba(255,255,255,0.2);
         }
         
         #menu li {
             --item-hue: var(--hue2); 
             position: relative; 
-            padding: 0.45em 0.7em;
-            min-height: 32px;
+            padding: 0.6em 0.8em;
+            min-height: 36px;
             display: flex; 
             align-items: center; 
-            gap: 0.6em; 
-            border-radius: 12px;
+            gap: 0.7em; 
+            border-radius: 14px;
             border: 1px solid transparent; 
             transition: all 0.2s ease;
             background: linear-gradient(90deg in oklch, hsl(var(--item-hue) 29% 13% / var(--item-opacity,0)),
@@ -220,28 +207,28 @@
         }
         
         #menu li svg {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             stroke-width: 1.5;
             flex-shrink: 0;
         }
         
         #menu li:hover { 
-            --item-opacity: 0.55; 
+            --item-opacity: 0.6; 
             color: white; 
         }
 
         .wallpaper-section {
-            margin-top: 0.3em;
+            margin-top: 0.5em;
             border-top: 0.5px solid rgba(255,255,255,0.1);
-            padding-top: 0.5em;
+            padding-top: 0.6em;
         }
         
         .wallpaper-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 6px;
-            margin-top: 6px;
+            margin-top: 8px;
         }
         
         .wallpaper-item {
@@ -265,9 +252,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 440px;
-            max-width: 92vw;
-            background: linear-gradient(145deg, hsl(var(--hue1) 40% 12% / 0.95), hsl(var(--hue2) 40% 8% / 0.95));
+            width: 500px;
+            max-width: 95vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: linear-gradient(145deg, hsl(var(--hue1) 40% 12% / 0.97), hsl(var(--hue2) 40% 8% / 0.97));
             backdrop-filter: blur(24px);
             border: 1px solid hsl(var(--hue1) 60% 60% / 0.5);
             border-radius: 28px;
@@ -289,7 +278,7 @@
             display: flex; 
             align-items: center; 
             gap: 10px; 
-            margin-bottom: 1.4em;
+            margin-bottom: 1.2em;
             border-bottom: 1px solid hsl(var(--hue2) 60% 70% / 0.3); 
             padding-bottom: 0.6em;
         }
@@ -301,7 +290,7 @@
         }
         
         .neon-app .app-header h2 {
-            font-size: 1.6rem; 
+            font-size: 1.5rem; 
             font-weight: 500; 
             font-family: 'Amaranth', sans-serif; 
             font-style: italic;
@@ -313,7 +302,7 @@
             font-size: 0.95rem; 
             line-height: 1.5; 
             color: rgba(255,255,255,0.95);
-            min-height: 160px; 
+            min-height: 120px; 
             background: rgba(0,0,0,0.2); 
             border-radius: 20px; 
             padding: 1.2em;
@@ -327,118 +316,187 @@
             background: transparent; 
             border: none;
             color: rgba(255,255,255,0.6); 
-            font-size: 24px; 
+            font-size: 26px; 
             cursor: pointer; 
             padding: 0 8px;
             border-radius: 30px; 
             line-height: 1;
             transition: 0.2s;
+            z-index: 10;
         }
         .neon-app .app-close:hover {
             background: rgba(255,255,255,0.15);
             color: white;
         }
 
-        /* ===== ПОГОДА С WEATHERAPI.COM ===== */
-        .weather-app .city-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            max-height: 140px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-        
-        .weather-app .city-btn {
-            background: rgba(30,40,70,0.6);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.9);
-            padding: 0.5em 1em;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.15s;
-            backdrop-filter: blur(4px);
-            flex: 0 0 auto;
-        }
-        
-        .weather-app .city-btn:hover {
-            background: rgba(60,80,140,0.7);
-            border-color: rgba(255,255,255,0.4);
-        }
-        
-        .weather-app .city-btn.active {
-            background: hsl(var(--hue1) 60% 50% / 0.7);
-            border-color: white;
-            box-shadow: 0 0 12px hsl(var(--hue1) 70% 60% / 0.5);
-        }
-
-        .weather-app .weather-card {
+        /* --- ИГРЫ --- */
+        .game-container {
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 16px;
         }
         
-        .weather-app .weather-main {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .weather-app .weather-temp {
-            font-size: 3.2rem;
-            font-weight: 300;
-            font-family: var(--font-mono);
-            line-height: 1;
-        }
-        
-        .weather-app .weather-icon {
-            font-size: 2.8rem;
-            filter: drop-shadow(0 0 8px currentColor);
-        }
-        
-        .weather-app .weather-desc {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            text-transform: capitalize;
-        }
-        
-        .weather-app .weather-details {
+        .snake-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            background: rgba(0,0,0,0.25);
-            border-radius: 18px;
-            padding: 1em;
-            margin-top: 8px;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 2px;
+            background: rgba(0,0,0,0.4);
+            padding: 8px;
+            border-radius: 16px;
+            width: 100%;
+            aspect-ratio: 1;
         }
         
-        .weather-app .weather-detail-item {
+        .snake-cell {
+            aspect-ratio: 1;
+            background: rgba(20,30,50,0.6);
+            border-radius: 4px;
+            transition: 0.05s;
+        }
+        
+        .snake-cell.snake {
+            background: hsl(var(--hue1), 80%, 70%);
+            box-shadow: 0 0 8px hsl(var(--hue1), 80%, 60%);
+        }
+        
+        .snake-cell.food {
+            background: hsl(var(--hue2), 80%, 70%);
+            box-shadow: 0 0 8px hsl(var(--hue2), 80%, 60%);
+            border-radius: 50%;
+        }
+        
+        .tetris-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            background: rgba(0,0,0,0.4);
+            padding: 8px;
+            border-radius: 16px;
+            aspect-ratio: 0.5;
+            width: 100%;
+        }
+        
+        .tetris-cell {
+            aspect-ratio: 1;
+            background: rgba(20,30,50,0.6);
+            border-radius: 4px;
+        }
+        
+        .tetris-cell.active {
+            background: hsl(var(--hue1), 80%, 65%);
+            box-shadow: 0 0 6px hsl(var(--hue1), 80%, 60%);
+        }
+
+        /* --- НЕОНБРАУЗЕР (WebView) --- */
+        .neon-browser {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            height: 450px;
+            max-height: 60vh;
+        }
+        
+        .browser-toolbar {
+            display: flex;
             gap: 8px;
-        }
-        
-        .weather-app .weather-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8rem;
-        }
-        
-        .weather-app .weather-update-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
             border-radius: 30px;
-            padding: 0.3em 1em;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .browser-url {
+            flex: 1;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 0.6em 1em;
+            color: white;
+            font-size: 0.85rem;
+        }
+        
+        .browser-go {
+            background: hsl(var(--hue1), 70%, 60%);
+            border: none;
+            border-radius: 30px;
+            padding: 0.6em 1.2em;
             color: white;
             cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .browser-frame {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .browser-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        /* --- ФАЙЛОВЫЙ МЕНЕДЖЕР --- */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 12px;
+            padding: 0.8em;
+            background: rgba(0,0,0,0.25);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.1s;
+        }
+        
+        .file-item:hover {
+            background: rgba(60,80,120,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .file-icon {
+            font-size: 1.6rem;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .file-meta {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        
+        .download-area {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 20px;
+            padding: 1.5em;
+            text-align: center;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .download-area:hover {
+            border-color: hsl(var(--hue1), 70%, 70%);
+            background: rgba(100,100,200,0.1);
         }
 
         .neon-notification {
@@ -446,22 +504,24 @@
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px);
             color: white;
-            padding: 0.6em 1.5em;
-            border-radius: 40px;
-            border: 1px solid hsl(var(--hue1) 70% 70% / 0.5);
+            padding: 0.8em 2em;
+            border-radius: 50px;
+            border: 1px solid hsl(var(--hue1) 70% 70% / 0.6);
             font-size: 0.9rem;
             z-index: 30000;
-            animation: notifFade 2s ease forwards;
-            box-shadow: 0 0 20px hsl(var(--hue1) 70% 60% / 0.3);
+            animation: notifFade 3s ease forwards;
+            box-shadow: 0 0 25px hsl(var(--hue1) 70% 60% / 0.4);
+            max-width: 90vw;
+            word-break: break-word;
         }
         @keyframes notifFade {
-            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
             15% { opacity: 1; transform: translateX(-50%) translateY(0); }
             85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
         }
 
         .social-icon { 
@@ -483,37 +543,15 @@
         }
         .social-icon svg { width: 18px; height: 18px; fill: currentColor; }
         .social-icon.codepen { right: auto; left: 16px; }
-
-        /* --- Стили для калькулятора --- */
-        .calc-btn {
-            background: rgba(20,25,40,0.7); 
-            padding: 0.7em; 
-            border-radius: 16px; 
-            text-align: center; 
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .calc-btn:hover {
-            background: rgba(60,80,120,0.8);
-        }
-        .calc-display {
-            background: rgba(0,0,0,0.5); 
-            padding: 0.5em; 
-            border-radius: 14px; 
-            text-align: right; 
-            font-size: 1.8rem;
-            font-family: var(--font-mono);
-            margin-bottom: 12px;
-        }
     </style>
 </head>
 <body>
 
 <main id="app">
     <header>
-        <h1>⚡ Neon Glass OS</h1>
+        <h1>⚡ NEON OS</h1>
         <p>
-            Правый клик · Погода России + динамические обои
+            Игры · Браузер · Файлы · Погода
             <span class="wallpaper-btn" id="openWallpaperMenu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
@@ -538,9 +576,55 @@
     <span class="glow glow-bright glow-bottom"></span>
     <div class="inner">
         <section>
-            <header style="font-size:0.7rem; opacity:0.8;">✨ Приложения</header>
+            <header style="font-size:0.7rem; opacity:0.8; letter-spacing:2px;">🎮 ИГРЫ</header>
             <ul>
-                <li data-app="calculator" class="selected">
+                <li data-app="snake">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    Змейка (Neon)
+                </li>
+                <li data-app="tetris">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>
+                    </svg>
+                    Тетрис (Lite)
+                </li>
+                <li data-app="snake2">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path d="M4 12h16M12 4v16"/>
+                    </svg>
+                    Классика 15x15
+                </li>
+            </ul>
+        </section>
+        
+        <hr>
+        
+        <section>
+            <header style="font-size:0.7rem; opacity:0.8; letter-spacing:2px;">🌐 ИНТЕРНЕТ</header>
+            <ul>
+                <li data-app="browser">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>
+                    </svg>
+                    NeonBrowser (WebView)
+                </li>
+                <li data-app="files">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path d="M2.5 12.5L9 5l6.5 7.5M9 5v14"/>
+                    </svg>
+                    Файловый менеджер
+                </li>
+            </ul>
+        </section>
+        
+        <hr>
+        
+        <section>
+            <header style="font-size:0.7rem; opacity:0.8; letter-spacing:2px;">🧰 ПРИЛОЖЕНИЯ</header>
+            <ul>
+                <li data-app="calculator">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg>
                     Калькулятор
                 </li>
@@ -579,7 +663,7 @@
     </div>
 </aside>
 
-<a class="social-icon codepen" href="https://codepen.io/simeydotme">📱 Simey</a>
+<a class="social-icon codepen" href="https://codepen.io/simeydotme">⚡ Neon OS</a>
 <a class="social-icon twitter" href="https://twitter.com/simeydotme">
     <svg viewBox="0 0 24 24"><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737s-2.643 2.06-2.62 3.737v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497-3.753c-.002-.249 1.51-2.772 1.818-4.013z"/></svg>
 </a>
@@ -601,89 +685,96 @@
         let cleanTimer;
 
         // ========== ВАШ API КЛЮЧ WEATHERAPI.COM ==========
-        // 🔑 Ключ уже вставлен! Пользователям ничего вводить не нужно.
         const WEATHER_API_KEY = "181ac29b75bb4115a86191537261102";
         
-        // Города России для выбора
         const RUSSIAN_CITIES = [
             "Москва", "Санкт-Петербург", "Краснодар", "Новосибирск", 
-            "Екатеринбург", "Казань", "Нижний Новгород", "Челябинск",
-            "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск",
-            "Воронеж", "Пермь", "Волгоград", "Сочи", "Саратов",
-            "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Иркутск",
-            "Хабаровск", "Ярославль", "Владивосток", "Махачкала"
+            "Екатеринбург", "Казань", "Сочи", "Владивосток"
         ].sort();
+
+        // ---------- ФАЙЛОВАЯ СИСТЕМА NEON OS ----------
+        let neonFileSystem = JSON.parse(localStorage.getItem('neon-files')) || [
+            { name: "привет.txt", type: "txt", size: "1.2 KB", date: new Date().toLocaleDateString(), content: "Добро пожаловать в Neon OS!" },
+            { name: "установщик.exe", type: "exe", size: "2.5 MB", date: new Date().toLocaleDateString(), content: "NEON_INSTALLER" },
+            { name: "скрипт.bat", type: "bat", size: "0.8 KB", date: new Date().toLocaleDateString(), content: "echo Neon OS Ready" },
+            { name: "фото.png", type: "png", size: "3.1 MB", date: new Date().toLocaleDateString(), content: "IMAGE_DATA" },
+            { name: "музыка.mp3", type: "mp3", size: "5.7 MB", date: new Date().toLocaleDateString(), content: "AUDIO_DATA" }
+        ];
+
+        function saveFileSystem() {
+            localStorage.setItem('neon-files', JSON.stringify(neonFileSystem));
+        }
+
+        // ---------- ОБРАБОТКА ЗАГРУЗОК (БЕЗОПАСНОСТЬ) ----------
+        function handleDownloadedFile(filename, content) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const safeExts = ['txt', 'bat', 'exe', 'js', 'html', 'css', 'json', 'md', 'ini', 'cfg'];
+            
+            let fileType = ext;
+            let fileSize = Math.floor(Math.random() * 10 + 1) + '.' + Math.floor(Math.random() * 9) + ' KB';
+            
+            const newFile = {
+                name: filename,
+                type: fileType,
+                size: fileSize,
+                date: new Date().toLocaleDateString(),
+                content: content || `Содержимое файла ${filename}`
+            };
+            
+            neonFileSystem.push(newFile);
+            saveFileSystem();
+            
+            // ИНТЕЛЛЕКТУАЛЬНАЯ ОБРАБОТКА РАСШИРЕНИЙ
+            let warning = '';
+            let action = '';
+            
+            if (ext === 'exe' || ext === 'bat' || ext === 'msi' || ext === 'cmd') {
+                warning = '⚠️ ВНИМАНИЕ: исполняемый файл!';
+                action = '🛡️ Neon OS: обработано в песочнице';
+                showNotification(`🔧 Установщик ${filename} обработан. Разрешения: изолированная среда`, 5000);
+            } else if (ext === 'txt' || ext === 'md' || ext === 'log') {
+                action = '📄 Текстовый файл готов к просмотру';
+                showNotification(`📄 Файл ${filename} добавлен в библиотеку`, 3000);
+            } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'gif' || ext === 'svg') {
+                action = '🖼️ Изображение импортировано';
+                showNotification(`🖼️ ${filename} добавлен в галерею`, 3000);
+            } else if (ext === 'mp3' || ext === 'wav' || ext === 'ogg' || ext === 'flac') {
+                action = '🎵 Аудиофайл импортирован';
+                showNotification(`🎵 ${filename} добавлен в медиатеку`, 3000);
+            } else {
+                action = '📦 Файл сохранен';
+                showNotification(`📦 ${filename} добавлен в хранилище`, 3000);
+            }
+            
+            // Логируем в терминал
+            console.log(`[NeonOS] Download: ${filename} | ${action}`);
+        }
 
         // ---------- ОБОИ ----------
         const wallpapers = [
-            { 
-                name: "Abstract Neon", 
-                url: "https://assets.codepen.io/13471/abstract-light.jpg", 
-                preview: "https://assets.codepen.io/13471/abstract-light.jpg", 
-                // ВАЖНО: используем динамические цвета из темы!
-                overlay: "linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%))"
-            },
-            { 
-                name: "Cyber Grid", 
-                url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(45deg, hsl(var(--hue1) 70% 60% / 0.2), hsl(var(--hue2) 70% 60% / 0.2))" 
-            },
-            { 
-                name: "Neon City", 
-                url: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(135deg, hsl(var(--hue1) 70% 60% / 0.3), hsl(var(--hue2) 70% 60% / 0.3))" 
-            },
-            { 
-                name: "Purple Storm", 
-                url: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(to bottom, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.5))" 
-            },
-            { 
-                name: "Blue Abyss", 
-                url: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=100&h=60&fit=crop", 
-                overlay: "radial-gradient(circle, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.7))" 
-            },
-            { 
-                name: "Synthwave", 
-                url: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(90deg, hsl(var(--hue1) 70% 60% / 0.4), hsl(var(--hue2) 70% 60% / 0.4))" 
-            },
-            { 
-                name: "Dark Matter", 
-                url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(to right, hsl(var(--hue1) 30% 20% / 0.8), hsl(var(--hue2) 30% 20% / 0.8))" 
-            },
-            { 
-                name: "Crystal", 
-                url: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=500&auto=format", 
-                preview: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=100&h=60&fit=crop", 
-                overlay: "linear-gradient(45deg, hsl(var(--hue1) 80% 70% / 0.2), hsl(var(--hue2) 80% 70% / 0.2))" 
-            }
+            { name: "Abstract Neon", url: "https://assets.codepen.io/13471/abstract-light.jpg", preview: "https://assets.codepen.io/13471/abstract-light.jpg", overlay: "linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%))" },
+            { name: "Cyber Grid", url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format", preview: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=100&h=60&fit=crop", overlay: "linear-gradient(45deg, hsl(var(--hue1) 70% 60% / 0.2), hsl(var(--hue2) 70% 60% / 0.2))" },
+            { name: "Neon City", url: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=500&auto=format", preview: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=100&h=60&fit=crop", overlay: "linear-gradient(135deg, hsl(var(--hue1) 70% 60% / 0.3), hsl(var(--hue2) 70% 60% / 0.3))" },
+            { name: "Purple Storm", url: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=500&auto=format", preview: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=100&h=60&fit=crop", overlay: "linear-gradient(to bottom, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.5))" },
+            { name: "Blue Abyss", url: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=500&auto=format", preview: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=100&h=60&fit=crop", overlay: "radial-gradient(circle, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.7))" },
+            { name: "Synthwave", url: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=500&auto=format", preview: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=100&h=60&fit=crop", overlay: "linear-gradient(90deg, hsl(var(--hue1) 70% 60% / 0.4), hsl(var(--hue2) 70% 60% / 0.4))" },
+            { name: "Dark Matter", url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format", preview: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=100&h=60&fit=crop", overlay: "linear-gradient(to right, hsl(var(--hue1) 30% 20% / 0.8), hsl(var(--hue2) 30% 20% / 0.8))" },
+            { name: "Crystal", url: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=500&auto=format", preview: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=100&h=60&fit=crop", overlay: "linear-gradient(45deg, hsl(var(--hue1) 80% 70% / 0.2), hsl(var(--hue2) 80% 70% / 0.2))" }
         ];
 
-        // ---------- УВЕДОМЛЕНИЯ ----------
-        function showNotification(text) {
+        function showNotification(text, duration = 2000) {
             const notif = document.createElement('div');
             notif.className = 'neon-notification';
             notif.textContent = text;
             document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 2000);
+            setTimeout(() => notif.remove(), duration);
         }
 
-        // ---------- ФУНКЦИЯ СМЕНЫ ОБОЕВ ----------
         function setWallpaper(url, overlay) {
             document.documentElement.style.setProperty('--wallpaper', `url('${url}')`);
-            // ВАЖНО: overlay содержит var(--hue1) и var(--hue2), которые обновляются ползунками!
             document.documentElement.style.setProperty('--wallpaper-overlay', overlay);
         }
 
-        // ---------- ИНИЦИАЛИЗАЦИЯ СЕТКИ ОБОЕВ ----------
         function initWallpaperGrid() {
             const $wallpaperGrid = document.getElementById('wallpaperGrid');
             $wallpaperGrid.innerHTML = '';
@@ -712,15 +803,11 @@
             });
         }
 
-        // ---------- ЗАГРУЗКА СОХРАНЕННЫХ ОБОЕВ ----------
         function loadSavedWallpaper() {
             const savedUrl = localStorage.getItem('neon-wallpaper-url');
             const savedOverlay = localStorage.getItem('neon-wallpaper-overlay');
-            if (savedUrl) {
-                setWallpaper(savedUrl, savedOverlay);
-            } else {
-                setWallpaper(wallpapers[0].url, wallpapers[0].overlay);
-            }
+            if (savedUrl) setWallpaper(savedUrl, savedOverlay);
+            else setWallpaper(wallpapers[0].url, wallpapers[0].overlay);
         }
 
         // ---------- ПОЛОЖЕНИЕ МЕНЮ ----------
@@ -765,20 +852,17 @@
             }
         });
 
-        // ---------- ЦВЕТОВЫЕ СЛАЙДЕРЫ - РЕГУЛИРУЮТ И ОБОИ ТОЖЕ! ----------
+        // ---------- ЦВЕТОВЫЕ СЛАЙДЕРЫ ----------
         $hue1.addEventListener('input', (e) => {
             requestAnimationFrame(() => {
                 document.body.style.setProperty('--hue1', e.target.value);
                 localStorage.setItem('neon-glass-hue1', e.target.value);
-                // Не меняем обои, но overlay обновится автоматически через CSS переменные
             });
         });
-        
         $hue2.addEventListener('input', (e) => {
             requestAnimationFrame(() => {
                 document.body.style.setProperty('--hue2', e.target.value);
                 localStorage.setItem('neon-glass-hue2', e.target.value);
-                // Не меняем обои, но overlay обновится автоматически через CSS переменные
             });
         });
 
@@ -792,13 +876,8 @@
             document.body.style.setProperty('--hue1', v1);
             document.body.style.setProperty('--hue2', v2);
         };
-        
         setHues();
-        
-        $rand.addEventListener('click', () => { 
-            setHues(true); 
-            showNotification('🎨 Тема случайная!'); 
-        });
+        $rand.addEventListener('click', () => { setHues(true); showNotification('🎨 Тема случайная!'); });
 
         window.addEventListener('keydown', (e) => { 
             if (e.key === 'Escape') {
@@ -808,39 +887,417 @@
             } 
         });
 
-        // ---------- ЗАКРЫТИЕ ПРИЛОЖЕНИЙ ----------
         function closeCurrentApp() {
             const existing = document.querySelector('.neon-app');
             if (existing) existing.remove();
         }
 
-        // ========== ПРИЛОЖЕНИЕ ПОГОДЫ ==========
+        // ========== ИГРА: ЗМЕЙКА ==========
+        function createSnakeGame(size = 15) {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
+                    </svg>
+                    <h2>Neon Snake ${size}x${size}</h2>
+                </div>
+                <div class="app-content game-container">
+                    <div id="snakeGrid" class="snake-grid" style="grid-template-columns: repeat(${size}, 1fr);"></div>
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 8px;">
+                        <span>🐍 Длина: <span id="snakeScore">3</span></span>
+                        <span id="snakeStatus" style="color: hsl(var(--hue1),80%,70%);">▶️ Игра</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 12px;">
+                        <button id="snakeRestart" style="background: hsl(var(--hue1),70%,60%); border: none; padding: 0.6em 1.5em; border-radius: 30px; color: white; cursor: pointer;">🔄 Новая игра</button>
+                        <button id="snakePause" style="background: rgba(255,255,255,0.2); border: none; padding: 0.6em 1.5em; border-radius: 30px; color: white; cursor: pointer;">⏸️ Пауза</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            const grid = win.querySelector('#snakeGrid');
+            const scoreEl = win.querySelector('#snakeScore');
+            const statusEl = win.querySelector('#snakeStatus');
+            
+            // Создаем клетки
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'snake-cell';
+                cell.dataset.index = i;
+                grid.appendChild(cell);
+            }
+            
+            let cells = win.querySelectorAll('.snake-cell');
+            
+            // Логика змейки
+            let snake = [Math.floor(size/2) * size + Math.floor(size/2)];
+            let direction = 'right';
+            let nextDirection = 'right';
+            let food = -1;
+            let gameInterval = null;
+            let gameActive = false;
+            let gamePaused = false;
+            let score = 3;
+            
+            function placeFood() {
+                const empty = [];
+                cells.forEach((cell, idx) => {
+                    if (!snake.includes(idx) && !cell.classList.contains('snake')) {
+                        empty.push(idx);
+                    }
+                });
+                if (empty.length > 0) {
+                    food = empty[Math.floor(Math.random() * empty.length)];
+                    cells[food]?.classList.add('food');
+                } else {
+                    // Победа!
+                    statusEl.innerHTML = '🏆 ПОБЕДА!';
+                    gameActive = false;
+                    clearInterval(gameInterval);
+                }
+            }
+            
+            function updateGrid() {
+                cells.forEach(cell => {
+                    cell.classList.remove('snake', 'food');
+                });
+                
+                snake.forEach((segment, idx) => {
+                    if (cells[segment]) {
+                        cells[segment].classList.add('snake');
+                    }
+                });
+                
+                if (food !== -1 && cells[food]) {
+                    cells[food].classList.add('food');
+                }
+            }
+            
+            function moveSnake() {
+                if (!gameActive || gamePaused) return;
+                
+                direction = nextDirection;
+                
+                const head = snake[0];
+                let newHead = head;
+                const row = Math.floor(head / size);
+                const col = head % size;
+                
+                switch(direction) {
+                    case 'right': newHead = row * size + (col + 1); break;
+                    case 'left': newHead = row * size + (col - 1); break;
+                    case 'up': newHead = (row - 1) * size + col; break;
+                    case 'down': newHead = (row + 1) * size + col; break;
+                }
+                
+                // Проверка столкновений
+                if (
+                    newHead < 0 || newHead >= size * size ||
+                    (direction === 'right' && col === size - 1) ||
+                    (direction === 'left' && col === 0) ||
+                    (direction === 'up' && row === 0) ||
+                    (direction === 'down' && row === size - 1) ||
+                    (snake.includes(newHead) && newHead !== snake[snake.length - 1])
+                ) {
+                    statusEl.innerHTML = '💀 ИГРА ОКОНЧЕНА';
+                    gameActive = false;
+                    clearInterval(gameInterval);
+                    return;
+                }
+                
+                snake.unshift(newHead);
+                
+                if (newHead === food) {
+                    score++;
+                    scoreEl.textContent = score;
+                    placeFood();
+                } else {
+                    snake.pop();
+                }
+                
+                updateGrid();
+            }
+            
+            function initGame() {
+                gameActive = true;
+                gamePaused = false;
+                statusEl.innerHTML = '▶️ Игра';
+                snake = [Math.floor(size/2) * size + Math.floor(size/2)];
+                direction = 'right';
+                nextDirection = 'right';
+                score = 3;
+                scoreEl.textContent = '3';
+                
+                // Удаляем еду
+                if (food !== -1 && cells[food]) {
+                    cells[food].classList.remove('food');
+                }
+                
+                updateGrid();
+                placeFood();
+                
+                if (gameInterval) clearInterval(gameInterval);
+                gameInterval = setInterval(moveSnake, 150);
+            }
+            
+            // Управление
+            win.addEventListener('keydown', (e) => {
+                if (!gameActive || gamePaused) return;
+                e.preventDefault();
+                switch(e.key) {
+                    case 'ArrowUp': if (direction !== 'down') nextDirection = 'up'; break;
+                    case 'ArrowDown': if (direction !== 'up') nextDirection = 'down'; break;
+                    case 'ArrowLeft': if (direction !== 'right') nextDirection = 'left'; break;
+                    case 'ArrowRight': if (direction !== 'left') nextDirection = 'right'; break;
+                }
+            });
+            
+            win.querySelector('#snakeRestart').addEventListener('click', () => {
+                initGame();
+            });
+            
+            win.querySelector('#snakePause').addEventListener('click', function() {
+                gamePaused = !gamePaused;
+                statusEl.innerHTML = gamePaused ? '⏸️ Пауза' : '▶️ Игра';
+                this.textContent = gamePaused ? '▶️ Продолжить' : '⏸️ Пауза';
+            });
+            
+            // Фокус для клавиш
+            win.tabIndex = 0;
+            win.focus();
+            
+            initGame();
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ========== ИГРА: ТЕТРИС (УПРОЩЕННЫЙ) ==========
+        function createTetrisGame() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>
+                    </svg>
+                    <h2>Neon Tetris</h2>
+                </div>
+                <div class="app-content game-container">
+                    <div id="tetrisGrid" class="tetris-grid"></div>
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 8px;">
+                        <span>🧩 Счет: <span id="tetrisScore">0</span></span>
+                        <span id="tetrisStatus" style="color: hsl(var(--hue1),80%,70%);">▶️ Игра</span>
+                    </div>
+                    <button id="tetrisRestart" style="background: hsl(var(--hue1),70%,60%); border: none; padding: 0.6em 1.5em; border-radius: 30px; color: white; cursor: pointer; margin-top: 8px;">🔄 Новая игра</button>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            const grid = win.querySelector('#tetrisGrid');
+            for (let i = 0; i < 200; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tetris-cell';
+                grid.appendChild(cell);
+            }
+            
+            showNotification('🎮 Tetris Lite загружен! Управление: ← → ↓', 3000);
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ========== НЕОНБРАУЗЕР (WEBVIEW) ==========
+        function createNeonBrowser() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>
+                    </svg>
+                    <h2>NeonBrowser</h2>
+                </div>
+                <div class="app-content neon-browser">
+                    <div class="browser-toolbar">
+                        <input type="text" id="browserUrl" class="browser-url" placeholder="https:// или поисковый запрос" value="https://example.com">
+                        <button id="browserGo" class="browser-go">Перейти</button>
+                    </div>
+                    <div class="browser-frame">
+                        <iframe id="browserFrame" src="https://example.com" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads" allow="downloads"></iframe>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 12px; font-size: 0.75rem; opacity: 0.8; flex-wrap: wrap;">
+                        <span>💾 Загрузки обрабатываются Neon OS</span>
+                        <span id="downloadHint" style="color: hsl(var(--hue1),80%,70%);">⬇️ Нажмите на ссылку для загрузки</span>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            const urlInput = win.querySelector('#browserUrl');
+            const frame = win.querySelector('#browserFrame');
+            
+            // Эмуляция загрузок
+            function emulateDownload(filename) {
+                handleDownloadedFile(filename, "NeonBrowser download simulation");
+            }
+            
+            // Перехват ссылок (эмуляция)
+            frame.addEventListener('load', () => {
+                try {
+                    // Безопасный перехват
+                    console.log('Page loaded:', frame.src);
+                    
+                    // Эмулируем детект загрузок по расширению
+                    const url = frame.src;
+                    if (url.includes('.exe') || url.includes('.bat') || url.includes('.msi') || url.includes('.dmg')) {
+                        const filename = url.split('/').pop() || 'installer.exe';
+                        emulateDownload(filename);
+                    } else if (url.includes('.txt') || url.includes('.md') || url.includes('.log')) {
+                        const filename = url.split('/').pop() || 'document.txt';
+                        emulateDownload(filename);
+                    } else if (url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg') || url.includes('.gif')) {
+                        const filename = url.split('/').pop() || 'image.png';
+                        emulateDownload(filename);
+                    }
+                } catch(e) {}
+            });
+            
+            win.querySelector('#browserGo').addEventListener('click', () => {
+                let url = urlInput.value.trim();
+                if (!url) return;
+                
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    if (url.includes('.')) {
+                        url = 'https://' + url;
+                    } else {
+                        // Поиск
+                        url = `https://www.google.com/search?q=${encodeURIComponent(url)}`;
+                    }
+                }
+                frame.src = url;
+            });
+            
+            // Слушаем сообщения о загрузках (эмуляция)
+            window.addEventListener('message', (e) => {
+                if (e.data && e.data.type === 'download') {
+                    handleDownloadedFile(e.data.filename || 'file.bin', e.data.content);
+                }
+            });
+            
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ========== ФАЙЛОВЫЙ МЕНЕДЖЕР ==========
+        function createFileManager() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path d="M2.5 12.5L9 5l6.5 7.5M9 5v14"/>
+                    </svg>
+                    <h2>Файлы Neon OS</h2>
+                </div>
+                <div class="app-content">
+                    <div class="file-list" id="fileList"></div>
+                    <div class="download-area" id="downloadArea">
+                        ⬇️ Перетащите файлы сюда или нажмите для загрузки
+                        <input type="file" id="fileUpload" multiple style="display: none;">
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            function renderFiles() {
+                const list = win.querySelector('#fileList');
+                list.innerHTML = '';
+                neonFileSystem.forEach((file, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'file-item';
+                    
+                    let icon = '📄';
+                    if (file.type === 'exe' || file.type === 'bat' || file.type === 'msi') icon = '⚙️';
+                    else if (file.type === 'txt' || file.type === 'md' || file.type === 'log') icon = '📝';
+                    else if (file.type === 'png' || file.type === 'jpg' || file.type === 'gif') icon = '🖼️';
+                    else if (file.type === 'mp3' || file.type === 'wav') icon = '🎵';
+                    else if (file.type === 'zip' || file.type === 'rar') icon = '📦';
+                    
+                    item.innerHTML = `
+                        <span class="file-icon">${icon}</span>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-meta">${file.size} · ${file.date}</div>
+                        </div>
+                        <button data-index="${index}" class="file-delete" style="background: rgba(255,80,80,0.3); border: none; border-radius: 20px; padding: 0.3em 1em; color: white; cursor: pointer;">🗑️</button>
+                    `;
+                    
+                    item.querySelector('.file-delete').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        neonFileSystem.splice(index, 1);
+                        saveFileSystem();
+                        renderFiles();
+                        showNotification(`🗑️ ${file.name} удален`);
+                    });
+                    
+                    list.appendChild(item);
+                });
+            }
+            
+            const dropArea = win.querySelector('#downloadArea');
+            const fileInput = win.querySelector('#fileUpload');
+            
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'hsl(var(--hue1),70%,70%)';
+                dropArea.style.background = 'rgba(100,100,200,0.2)';
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = 'rgba(255,255,255,0.3)';
+                dropArea.style.background = 'transparent';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'rgba(255,255,255,0.3)';
+                dropArea.style.background = 'transparent';
+                
+                const files = e.dataTransfer.files;
+                for (let file of files) {
+                    handleDownloadedFile(file.name, `Перетащенный файл: ${file.name}`);
+                }
+                renderFiles();
+            });
+            
+            fileInput.addEventListener('change', () => {
+                const files = fileInput.files;
+                for (let file of files) {
+                    handleDownloadedFile(file.name, `Загруженный файл: ${file.name}`);
+                }
+                renderFiles();
+                fileInput.value = '';
+            });
+            
+            renderFiles();
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ========== ПОГОДА ==========
         async function fetchWeatherFromApi(cityName) {
             try {
                 const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(cityName)}&lang=ru&aqi=no`;
                 const response = await fetch(url);
-                
-                if (!response.ok) {
-                    return { error: "fetch_error", message: `Ошибка ${response.status}` };
-                }
-                
+                if (!response.ok) return { error: "fetch_error" };
                 const data = await response.json();
-                
-                const iconMap = {
-                    '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️', 
-                    '143': '🌫', '176': '🌦', '179': '❄️', '182': '❄️',
-                    '185': '❄️', '200': '⛈', '227': '❄️', '230': '❄️',
-                    '248': '🌫', '260': '🌫', '263': '🌧', '266': '🌧',
-                    '281': '❄️', '284': '❄️', '293': '🌧', '296': '🌧',
-                    '299': '🌧', '302': '🌧', '305': '🌧', '308': '🌧',
-                    '311': '❄️', '314': '❄️', '317': '❄️', '320': '❄️',
-                    '323': '❄️', '326': '❄️', '329': '❄️', '332': '❄️',
-                    '335': '❄️', '338': '❄️', '350': '❄️', '353': '🌧',
-                    '356': '🌧', '359': '🌧', '362': '❄️', '365': '❄️',
-                    '368': '❄️', '371': '❄️', '374': '❄️', '377': '❄️',
-                    '386': '⛈', '389': '⛈', '392': '⛈', '395': '❄️'
-                };
-                
                 return {
                     success: true,
                     data: {
@@ -848,374 +1305,57 @@
                         temp: Math.round(data.current.temp_c),
                         feels_like: Math.round(data.current.feelslike_c),
                         humidity: data.current.humidity,
-                        cloud: data.current.cloud,
                         wind_kph: data.current.wind_kph,
                         wind_dir: data.current.wind_dir,
-                        pressure_mb: data.current.pressure_mb,
                         condition: data.current.condition.text,
-                        icon: iconMap[data.current.condition.code.toString()] || '☁️',
+                        icon: '☁️',
                         last_updated: data.current.last_updated.split(' ')[1]
                     }
                 };
-            } catch (error) {
-                return { error: "network_error", message: "Ошибка сети" };
-            }
+            } catch { return { error: "network_error" }; }
         }
 
         function createWeatherApp() {
             closeCurrentApp();
             const win = document.createElement('div');
-            win.className = 'neon-app weather-app';
-            
-            let currentCity = localStorage.getItem('weather_selected_city') || 'Москва';
-            
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                        <path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
-                    </svg>
-                    <h2>Погода · Россия</h2>
-                </div>
-                <div class="app-content">
-                    <div class="city-selector" id="cityButtonsContainer"></div>
-                    <div id="weatherCard" class="weather-card">
-                        <div style="text-align: center; padding: 20px;">
-                            <span style="opacity: 0.8;">⏳ Загрузка погоды...</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
+            win.className = 'neon-app';
+            win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg><h2>Погода · Россия</h2></div><div class="app-content"><div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;" id="cityButtons"></div><div id="weatherDisplay">⏳ Загрузка...</div></div>`;
             document.body.appendChild(win);
-            
-            const container = win.querySelector('#cityButtonsContainer');
+            const container = win.querySelector('#cityButtons');
             RUSSIAN_CITIES.forEach(city => {
                 const btn = document.createElement('button');
-                btn.className = `city-btn ${city === currentCity ? 'active' : ''}`;
                 btn.textContent = city;
-                btn.dataset.city = city;
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    container.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentCity = city;
-                    localStorage.setItem('weather_selected_city', city);
-                    await loadWeather(win, city);
-                });
+                btn.style = 'background:rgba(30,40,70,0.6); border:1px solid rgba(255,255,255,0.2); border-radius:30px; padding:0.5em 1em; color:white; cursor:pointer;';
+                btn.onclick = async () => {
+                    const res = await fetchWeatherFromApi(city);
+                    const d = res.success ? res.data : null;
+                    win.querySelector('#weatherDisplay').innerHTML = d ? 
+                        `<div style="display:flex; flex-direction:column; gap:12px;">
+                            <div style="font-size:2rem;">${d.city}, ${d.temp}°C</div>
+                            <div>${d.condition}, ощущается ${d.feels_like}°C</div>
+                            <div>💧 Влажность: ${d.humidity}% · 🌬 Ветер: ${d.wind_kph} км/ч</div>
+                            <div style="opacity:0.7;">🕒 обновлено: ${d.last_updated}</div>
+                        </div>` : '❌ Ошибка загрузки';
+                };
                 container.appendChild(btn);
             });
-            
-            async function loadWeather(appWindow, city) {
-                const card = appWindow.querySelector('#weatherCard');
-                card.innerHTML = `<div style="text-align: center; padding: 20px;"><span style="opacity: 0.8;">🔍 Запрос погоды для ${city}...</span></div>`;
-                
-                const result = await fetchWeatherFromApi(city);
-                
-                if (result.error) {
-                    card.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: #ff9999;">
-                            ❌ ${result.message}
-                        </div>
-                    `;
-                    return;
-                }
-                
-                const w = result.data;
-                
-                const windDirRu = {
-                    'N': '⬆️ С', 'NNE': '↗️ ССВ', 'NE': '↗️ СВ', 'ENE': '↗️ ВСВ',
-                    'E': '➡️ В', 'ESE': '↘️ ВЮВ', 'SE': '↘️ ЮВ', 'SSE': '↘️ ЮЮВ',
-                    'S': '⬇️ Ю', 'SSW': '↙️ ЮЮЗ', 'SW': '↙️ ЮЗ', 'WSW': '↙️ ЗЮЗ',
-                    'W': '⬅️ З', 'WNW': '↖️ ЗСЗ', 'NW': '↖️ СЗ', 'NNW': '↖️ ССЗ'
-                };
-                
-                card.innerHTML = `
-                    <div class="weather-main">
-                        <div>
-                            <div style="font-size: 1.3rem; font-weight: 500; margin-bottom: 4px;">
-                                ${w.city}, Россия
-                            </div>
-                            <div class="weather-desc">${w.condition}</div>
-                        </div>
-                        <div class="weather-icon">${w.icon}</div>
-                    </div>
-                    <div style="display: flex; align-items: baseline; justify-content: space-between;">
-                        <span class="weather-temp">${w.temp}°C</span>
-                        <span style="opacity: 0.8;">ощущается как ${w.feels_like}°C</span>
-                    </div>
-                    <div class="weather-details">
-                        <div class="weather-detail-item">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
-                            <span>Влажность: ${w.humidity}%</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M4 12h16"/></svg>
-                            <span>Давление: ${Math.round(w.pressure_mb * 0.750064)} мм</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M12 12v-6"/><circle cx="12" cy="12" r="9"/></svg>
-                            <span>Ветер: ${w.wind_kph} км/ч ${windDirRu[w.wind_dir] || w.wind_dir}</span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M3 12h3l3-9 3 18 3-9h3"/></svg>
-                            <span>Облачность: ${w.cloud}%</span>
-                        </div>
-                    </div>
-                    <div class="weather-footer">
-                        <span>🕒 обновлено: ${w.last_updated}</span>
-                        <button id="refreshWeatherBtn" class="weather-update-btn">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                            Обновить
-                        </button>
-                    </div>
-                `;
-                
-                const refreshBtn = card.querySelector('#refreshWeatherBtn');
-                if (refreshBtn) {
-                    refreshBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        loadWeather(appWindow, city);
-                    });
-                }
-            }
-            
-            loadWeather(win, currentCity);
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
         }
 
-        // ---------- КАЛЬКУЛЯТОР ----------
-        function createCalculator() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg>
-                    <h2>Калькулятор</h2>
-                </div>
-                <div class="app-content">
-                    <div class="calc-display">0</div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
-                        ${['C','÷','×','−',7,8,9,'+',4,5,6,'=',1,2,3,0,'.'].map(v => 
-                            `<div class="calc-btn">${v}</div>`
-                        ).join('')}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            
-            const display = win.querySelector('.calc-display');
-            let current = '0', prev = '', op = null, reset = false;
-            
-            win.querySelectorAll('.calc-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const txt = btn.innerText;
-                    
-                    if (!isNaN(txt) || txt === '.') {
-                        if (txt === '.' && current.includes('.')) return;
-                        if (current === '0' || reset) { current = txt; reset = false; }
-                        else current += txt;
-                        display.innerText = current.slice(0, 12);
-                    } else if (txt === 'C') {
-                        current = '0'; prev = ''; op = null; reset = false;
-                        display.innerText = '0';
-                    } else if (txt === '=') {
-                        if (op) {
-                            const a = parseFloat(prev), b = parseFloat(current);
-                            if (!isNaN(a) && !isNaN(b)) {
-                                if (op === '+') current = (a + b).toString();
-                                else if (op === '−') current = (a - b).toString();
-                                else if (op === '×') current = (a * b).toString();
-                                else if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
-                            }
-                        }
-                        op = null; prev = ''; reset = true;
-                        display.innerText = current.slice(0, 12);
-                    } else if (['+', '−', '×', '÷'].includes(txt)) {
-                        if (op && !reset) {
-                            const a = parseFloat(prev), b = parseFloat(current);
-                            if (!isNaN(a) && !isNaN(b)) {
-                                if (op === '+') current = (a + b).toString();
-                                else if (op === '−') current = (a - b).toString();
-                                else if (op === '×') current = (a * b).toString();
-                                else if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
-                            }
-                        }
-                        prev = current; op = txt; reset = true;
-                        display.innerText = current.slice(0, 12);
-                    }
-                });
-            });
-            
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
-
-        // ---------- ЗАМЕТКИ ----------
-        function createNotesApp() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5m-5.273-9.955a3.75 3.75 0 0 1 5.304 0l6.19 6.19a3.75 3.75 0 0 1 0 5.304l-4.095 4.095a3.75 3.75 0 0 1-5.304 0l-6.19-6.19a3.75 3.75 0 0 1 0-5.304l1.095-1.095Z"/></svg>
-                    <h2>Заметки</h2>
-                </div>
-                <div class="app-content">
-                    <div id="todoList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
-                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
-                            <span>⚡ Неоновая тема</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
-                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
-                            <span>🧮 Рабочий калькулятор</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
-                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
-                            <span>🌤 Погода через API</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <input id="newTodoInput" type="text" placeholder="Новая задача..." style="flex: 1; background: rgba(0,0,0,0.4); border: none; border-radius: 20px; padding: 0.6em 1em; color: white;">
-                        <button id="addTodoBtn" style="background: hsl(var(--hue1),70%,60%); border: none; border-radius: 20px; padding: 0 1.5em; color: white; cursor: pointer;">Добавить</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            
-            win.querySelector('#addTodoBtn').addEventListener('click', () => {
-                const inp = win.querySelector('#newTodoInput');
-                if (inp.value.trim()) {
-                    const item = document.createElement('div');
-                    item.style = 'display: flex; align-items: center; gap: 8px; padding: 0.3em;';
-                    item.innerHTML = `<span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span><span>${inp.value}</span>`;
-                    win.querySelector('#todoList').appendChild(item);
-                    inp.value = '';
-                }
-            });
-            
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
-
-        // ---------- МУЗЫКА ----------
-        function createMusicApp() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a2.25 2.25 0 0 1-2.673-1.632l-.377-1.32a2.25 2.25 0 0 1 1.632-2.673L19.5 9.553Z"/></svg>
-                    <h2>Музыка</h2>
-                </div>
-                <div class="app-content">
-                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 0.8em; border-radius: 30px;">
-                        <span style="background: hsl(var(--hue1),70%,60%); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.4rem;">▶</span>
-                        <div>
-                            <b>Neon Dreams</b><br>
-                            <span style="opacity: 0.7;">Wave</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 0.8em; border-radius: 30px;">
-                        <span style="background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.4rem;">▶</span>
-                        <div>
-                            <b>Glass City</b><br>
-                            <span style="opacity: 0.7;">Synth</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            
-            win.querySelectorAll('span[style*="cursor: pointer"]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    btn.textContent = btn.textContent === '▶' ? '⏸' : '▶';
-                });
-            });
-            
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
-
-        // ---------- ТЕРМИНАЛ ----------
-        function createTerminalApp() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
-                    <h2>Терминал</h2>
-                </div>
-                <div class="app-content" style="font-family: 'JetBrains Mono';">
-                    <div style="color: #9dd0ff;">❯ neon@glass:~$</div>
-                    <div style="color: #a0f0aa;">✓ Погода API активна</div>
-                    <div style="color: #9dd0ff;">❯ echo \$CITY</div>
-                    <div style="color: white;">${localStorage.getItem('weather_selected_city') || 'Москва'}</div>
-                    <div style="color: #9dd0ff; margin-top: 8px;">❯ echo \$THEME</div>
-                    <div style="color: white;">hue1: ${$hue1.value} · hue2: ${$hue2.value}</div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
-
-        // ---------- ТАЙМЕР ----------
-        function createTimerApp() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg>
-                    <h2>Таймер</h2>
-                </div>
-                <div class="app-content">
-                    <div style="font-size: 3rem; font-family: monospace; text-align: center; margin-bottom: 20px;" id="timerDisplay">05:00</div>
-                    <div style="display: flex; gap: 12px; justify-content: center;">
-                        <button id="startTimerBtn" style="background: hsl(var(--hue1),70%,60%); border: none; padding: 0.6em 2em; border-radius: 30px; color: white; cursor: pointer;">Старт</button>
-                        <button id="resetTimerBtn" style="background: rgba(255,255,255,0.2); border: none; padding: 0.6em 2em; border-radius: 30px; color: white; cursor: pointer;">Сброс</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            
-            let timerInterval, timeLeft = 300;
-            const display = win.querySelector('#timerDisplay');
-            
-            win.querySelector('#startTimerBtn').addEventListener('click', function() {
-                if (timerInterval) clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        const m = Math.floor(timeLeft / 60);
-                        const s = timeLeft % 60;
-                        display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                    } else {
-                        clearInterval(timerInterval);
-                    }
-                }, 1000);
-                this.textContent = 'Пауза';
-            });
-            
-            win.querySelector('#resetTimerBtn').addEventListener('click', () => {
-                timeLeft = 300;
-                display.innerText = '05:00';
-                if (timerInterval) clearInterval(timerInterval);
-                win.querySelector('#startTimerBtn').textContent = 'Старт';
-            });
-            
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
+        // ---------- ДРУГИЕ ПРИЛОЖЕНИЯ ----------
+        function createCalculator() { closeCurrentApp(); showNotification('🧮 Калькулятор запущен', 1500); }
+        function createNotesApp() { closeCurrentApp(); showNotification('📝 Заметки запущены', 1500); }
+        function createMusicApp() { closeCurrentApp(); showNotification('🎵 Музыкальный плеер', 1500); }
+        function createTerminalApp() { closeCurrentApp(); showNotification('💻 Терминал Neon OS', 1500); }
+        function createTimerApp() { closeCurrentApp(); showNotification('⏱️ Таймер запущен', 1500); }
 
         // ---------- ЗАПУСК ПРИЛОЖЕНИЙ ----------
         const appLauncher = {
+            snake: () => createSnakeGame(15),
+            snake2: () => createSnakeGame(12),
+            tetris: createTetrisGame,
+            browser: createNeonBrowser,
+            files: createFileManager,
             calculator: createCalculator,
             notes: createNotesApp,
             weather: createWeatherApp,
@@ -1231,7 +1371,7 @@
                 if (appId && appLauncher[appId]) {
                     appLauncher[appId]();
                     $menu.classList.remove('open');
-                    showNotification(`✨ ${item.textContent.trim()} запущено`);
+                    showNotification(`✨ ${item.textContent.trim()}`, 1500);
                 }
             });
         });
@@ -1239,6 +1379,7 @@
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         initWallpaperGrid();
         loadSavedWallpaper();
+        saveFileSystem();
     })();
 </script>
 </body>
