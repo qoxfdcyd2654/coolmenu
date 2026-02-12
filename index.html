@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>Neon Glass OS · Погода России (WeatherAPI.com)</title>
+    <title>Neon Glass OS · Погода России + Динамические обои</title>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Amaranth:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* --- ROOT & RESET (полностью сохранён ваш неоновый стиль) --- */
+        /* --- ROOT & RESET --- */
         * {
             margin: 0;
             padding: 0;
@@ -30,6 +30,7 @@
 
         body {
             background: #08090d;
+            /* ВАЖНО: динамическая подстановка цветов через var() */
             background-image: var(--wallpaper), var(--wallpaper-overlay);
             background-size: cover;
             background-position: center;
@@ -38,7 +39,7 @@
             font-family: 'Asap', sans-serif;
             min-height: 100vh;
             padding: 0;
-            transition: background-image 0.4s var(--ease);
+            transition: background-image 0.4s var(--ease), background-color 0.2s ease;
         }
 
         #app {
@@ -49,6 +50,7 @@
             justify-content: space-between;
         }
 
+        /* --- HEADER / FOOTER --- */
         #app > header {
             display: flex;
             gap: 0.5em;
@@ -172,6 +174,20 @@
             transition-delay: 0s;
             filter: blur(0px);
         }
+
+        /* --- Сияние и глоу эффекты (используют hue из темы!) --- */
+        #menu .shine, #menu .glow { --hue: var(--hue1); }
+        #menu .shine-bottom, #menu .glow-bottom { --hue: var(--hue2); --conic: 135deg; }
+        #menu .shine, #menu .shine::before, #menu .shine::after {
+            pointer-events: none; border-radius: 0; border-top-right-radius: inherit; border-bottom-left-radius: inherit;
+            border: 1px solid transparent; width: 70%; aspect-ratio: 1; position: absolute; right: calc(var(--border) * -1);
+            top: calc(var(--border) * -1); z-index: 1; --start: 12%;
+            background: conic-gradient(from var(--conic, -45deg) at center in oklch, transparent var(--start,0%),
+                      hsl( var(--hue), var(--sat,80%), var(--lit,60%)), transparent  var(--end,50%) ) border-box;
+            mask: linear-gradient(transparent), linear-gradient(black); mask-clip: padding-box, border-box; mask-composite: subtract;
+        }
+        #menu .shine::after { --start: 17%; --end: 33%; }
+        #menu .glow { mask-size: 40%; filter: blur(8px) brightness(0.6); }
 
         #menu .inner { 
             display: flex; 
@@ -323,7 +339,7 @@
             color: white;
         }
 
-        /* ===== ПОГОДА С WEATHERAPI.COM (КЛЮЧ УЖЕ ВСТАВЛЕН) ===== */
+        /* ===== ПОГОДА С WEATHERAPI.COM ===== */
         .weather-app .city-selector {
             display: flex;
             gap: 8px;
@@ -467,6 +483,28 @@
         }
         .social-icon svg { width: 18px; height: 18px; fill: currentColor; }
         .social-icon.codepen { right: auto; left: 16px; }
+
+        /* --- Стили для калькулятора --- */
+        .calc-btn {
+            background: rgba(20,25,40,0.7); 
+            padding: 0.7em; 
+            border-radius: 16px; 
+            text-align: center; 
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .calc-btn:hover {
+            background: rgba(60,80,120,0.8);
+        }
+        .calc-display {
+            background: rgba(0,0,0,0.5); 
+            padding: 0.5em; 
+            border-radius: 14px; 
+            text-align: right; 
+            font-size: 1.8rem;
+            font-family: var(--font-mono);
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -475,7 +513,7 @@
     <header>
         <h1>⚡ Neon Glass OS</h1>
         <p>
-            Правый клик · Погода России (ключ готов)
+            Правый клик · Погода России + динамические обои
             <span class="wallpaper-btn" id="openWallpaperMenu">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
@@ -566,7 +604,7 @@
         // 🔑 Ключ уже вставлен! Пользователям ничего вводить не нужно.
         const WEATHER_API_KEY = "181ac29b75bb4115a86191537261102";
         
-        // Города России для выбора (20+ городов)
+        // Города России для выбора
         const RUSSIAN_CITIES = [
             "Москва", "Санкт-Петербург", "Краснодар", "Новосибирск", 
             "Екатеринбург", "Казань", "Нижний Новгород", "Челябинск",
@@ -578,14 +616,55 @@
 
         // ---------- ОБОИ ----------
         const wallpapers = [
-            { name: "Abstract Neon", url: "https://assets.codepen.io/13471/abstract-light.jpg", preview: "https://assets.codepen.io/13471/abstract-light.jpg", overlay: "linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%))" },
-            { name: "Cyber Grid", url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format", preview: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=100&h=60&fit=crop", overlay: "linear-gradient(45deg, rgba(0,255,255,0.2), rgba(255,0,255,0.2))" },
-            { name: "Neon City", url: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=500&auto=format", preview: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=100&h=60&fit=crop", overlay: "linear-gradient(135deg, rgba(100,0,255,0.3), rgba(0,200,255,0.3))" },
-            { name: "Purple Storm", url: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=500&auto=format", preview: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=100&h=60&fit=crop", overlay: "linear-gradient(to bottom, rgba(150,0,255,0.3), rgba(0,0,0,0.5))" },
-            { name: "Blue Abyss", url: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=500&auto=format", preview: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=100&h=60&fit=crop", overlay: "radial-gradient(circle, rgba(0,100,255,0.3), rgba(0,0,50,0.7))" },
-            { name: "Synthwave", url: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=500&auto=format", preview: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=100&h=60&fit=crop", overlay: "linear-gradient(90deg, rgba(255,0,150,0.4), rgba(0,200,255,0.4))" },
-            { name: "Dark Matter", url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format", preview: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=100&h=60&fit=crop", overlay: "linear-gradient(to right, rgba(20,20,40,0.8), rgba(40,20,60,0.8))" },
-            { name: "Crystal", url: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=500&auto=format", preview: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=100&h=60&fit=crop", overlay: "linear-gradient(45deg, rgba(200,255,255,0.2), rgba(255,200,255,0.2))" }
+            { 
+                name: "Abstract Neon", 
+                url: "https://assets.codepen.io/13471/abstract-light.jpg", 
+                preview: "https://assets.codepen.io/13471/abstract-light.jpg", 
+                // ВАЖНО: используем динамические цвета из темы!
+                overlay: "linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%))"
+            },
+            { 
+                name: "Cyber Grid", 
+                url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(45deg, hsl(var(--hue1) 70% 60% / 0.2), hsl(var(--hue2) 70% 60% / 0.2))" 
+            },
+            { 
+                name: "Neon City", 
+                url: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1519608487953-e17c5135a08e?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(135deg, hsl(var(--hue1) 70% 60% / 0.3), hsl(var(--hue2) 70% 60% / 0.3))" 
+            },
+            { 
+                name: "Purple Storm", 
+                url: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(to bottom, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.5))" 
+            },
+            { 
+                name: "Blue Abyss", 
+                url: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=100&h=60&fit=crop", 
+                overlay: "radial-gradient(circle, hsl(var(--hue1) 70% 60% / 0.3), rgba(0,0,0,0.7))" 
+            },
+            { 
+                name: "Synthwave", 
+                url: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1503435980610-a51f3ddfee50?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(90deg, hsl(var(--hue1) 70% 60% / 0.4), hsl(var(--hue2) 70% 60% / 0.4))" 
+            },
+            { 
+                name: "Dark Matter", 
+                url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(to right, hsl(var(--hue1) 30% 20% / 0.8), hsl(var(--hue2) 30% 20% / 0.8))" 
+            },
+            { 
+                name: "Crystal", 
+                url: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=500&auto=format", 
+                preview: "https://images.unsplash.com/photo-1518070462831-33d1e0a3cba0?w=100&h=60&fit=crop", 
+                overlay: "linear-gradient(45deg, hsl(var(--hue1) 80% 70% / 0.2), hsl(var(--hue2) 80% 70% / 0.2))" 
+            }
         ];
 
         // ---------- УВЕДОМЛЕНИЯ ----------
@@ -600,7 +679,8 @@
         // ---------- ФУНКЦИЯ СМЕНЫ ОБОЕВ ----------
         function setWallpaper(url, overlay) {
             document.documentElement.style.setProperty('--wallpaper', `url('${url}')`);
-            document.documentElement.style.setProperty('--wallpaper-overlay', overlay || 'linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%))');
+            // ВАЖНО: overlay содержит var(--hue1) и var(--hue2), которые обновляются ползунками!
+            document.documentElement.style.setProperty('--wallpaper-overlay', overlay);
         }
 
         // ---------- ИНИЦИАЛИЗАЦИЯ СЕТКИ ОБОЕВ ----------
@@ -636,8 +716,11 @@
         function loadSavedWallpaper() {
             const savedUrl = localStorage.getItem('neon-wallpaper-url');
             const savedOverlay = localStorage.getItem('neon-wallpaper-overlay');
-            if (savedUrl) setWallpaper(savedUrl, savedOverlay);
-            else setWallpaper(wallpapers[0].url, wallpapers[0].overlay);
+            if (savedUrl) {
+                setWallpaper(savedUrl, savedOverlay);
+            } else {
+                setWallpaper(wallpapers[0].url, wallpapers[0].overlay);
+            }
         }
 
         // ---------- ПОЛОЖЕНИЕ МЕНЮ ----------
@@ -682,17 +765,20 @@
             }
         });
 
-        // ---------- ЦВЕТОВЫЕ СЛАЙДЕРЫ ----------
+        // ---------- ЦВЕТОВЫЕ СЛАЙДЕРЫ - РЕГУЛИРУЮТ И ОБОИ ТОЖЕ! ----------
         $hue1.addEventListener('input', (e) => {
             requestAnimationFrame(() => {
                 document.body.style.setProperty('--hue1', e.target.value);
                 localStorage.setItem('neon-glass-hue1', e.target.value);
+                // Не меняем обои, но overlay обновится автоматически через CSS переменные
             });
         });
+        
         $hue2.addEventListener('input', (e) => {
             requestAnimationFrame(() => {
                 document.body.style.setProperty('--hue2', e.target.value);
                 localStorage.setItem('neon-glass-hue2', e.target.value);
+                // Не меняем обои, но overlay обновится автоматически через CSS переменные
             });
         });
 
@@ -701,12 +787,18 @@
             const r2 = r1 - 80 + (Math.floor(Math.random() * 60) - 30);
             const v1 = random ? r1 : (localStorage.getItem('neon-glass-hue1') ?? r1);
             const v2 = random ? r2 : (localStorage.getItem('neon-glass-hue2') ?? r2);
-            $hue1.value = v1; $hue2.value = v2;
+            $hue1.value = v1; 
+            $hue2.value = v2;
             document.body.style.setProperty('--hue1', v1);
             document.body.style.setProperty('--hue2', v2);
         };
+        
         setHues();
-        $rand.addEventListener('click', () => { setHues(true); showNotification('🎨 Тема случайная!'); });
+        
+        $rand.addEventListener('click', () => { 
+            setHues(true); 
+            showNotification('🎨 Тема случайная!'); 
+        });
 
         window.addEventListener('keydown', (e) => { 
             if (e.key === 'Escape') {
@@ -722,26 +814,18 @@
             if (existing) existing.remove();
         }
 
-        // ========== ПРИЛОЖЕНИЕ ПОГОДЫ (WEATHERAPI.COM) ==========
-        // 🔥 Ключ уже встроен! Работает сразу.
+        // ========== ПРИЛОЖЕНИЕ ПОГОДЫ ==========
         async function fetchWeatherFromApi(cityName) {
             try {
-                const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(cityName)}&lang=ru&aqi=yes`;
+                const url = `https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(cityName)}&lang=ru&aqi=no`;
                 const response = await fetch(url);
                 
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        return { error: "invalid_key", message: "Неверный API-ключ" };
-                    }
-                    if (response.status === 400) {
-                        return { error: "city_not_found", message: "Город не найден" };
-                    }
                     return { error: "fetch_error", message: `Ошибка ${response.status}` };
                 }
                 
                 const data = await response.json();
                 
-                // Определяем иконку погоды
                 const iconMap = {
                     '113': '☀️', '116': '⛅', '119': '☁️', '122': '☁️', 
                     '143': '🌫', '176': '🌦', '179': '❄️', '182': '❄️',
@@ -757,32 +841,23 @@
                     '386': '⛈', '389': '⛈', '392': '⛈', '395': '❄️'
                 };
                 
-                const weatherData = {
-                    city: data.location.name,
-                    country: data.location.country,
-                    temp: Math.round(data.current.temp_c),
-                    feels_like: Math.round(data.current.feelslike_c),
-                    humidity: data.current.humidity,
-                    cloud: data.current.cloud,
-                    wind_kph: data.current.wind_kph,
-                    wind_dir: data.current.wind_dir,
-                    pressure_mb: data.current.pressure_mb,
-                    precip_mm: data.current.precip_mm,
-                    uv: data.current.uv,
-                    gust_kph: data.current.gust_kph,
-                    condition: data.current.condition.text,
-                    icon_code: data.current.condition.code.toString(),
-                    icon: iconMap[data.current.condition.code.toString()] || '☁️',
-                    last_updated: data.current.last_updated.split(' ')[1],
-                    air_quality: data.current.air_quality ? {
-                        pm2_5: Math.round(data.current.air_quality.pm2_5),
-                        pm10: Math.round(data.current.air_quality.pm10)
-                    } : null
+                return {
+                    success: true,
+                    data: {
+                        city: data.location.name,
+                        temp: Math.round(data.current.temp_c),
+                        feels_like: Math.round(data.current.feelslike_c),
+                        humidity: data.current.humidity,
+                        cloud: data.current.cloud,
+                        wind_kph: data.current.wind_kph,
+                        wind_dir: data.current.wind_dir,
+                        pressure_mb: data.current.pressure_mb,
+                        condition: data.current.condition.text,
+                        icon: iconMap[data.current.condition.code.toString()] || '☁️',
+                        last_updated: data.current.last_updated.split(' ')[1]
+                    }
                 };
-                
-                return { success: true, data: weatherData };
             } catch (error) {
-                console.error('WeatherAPI error:', error);
                 return { error: "network_error", message: "Ошибка сети" };
             }
         }
@@ -814,7 +889,6 @@
             
             document.body.appendChild(win);
             
-            // Заполняем кнопки городов
             const container = win.querySelector('#cityButtonsContainer');
             RUSSIAN_CITIES.forEach(city => {
                 const btn = document.createElement('button');
@@ -832,7 +906,6 @@
                 container.appendChild(btn);
             });
             
-            // Функция загрузки погоды
             async function loadWeather(appWindow, city) {
                 const card = appWindow.querySelector('#weatherCard');
                 card.innerHTML = `<div style="text-align: center; padding: 20px;"><span style="opacity: 0.8;">🔍 Запрос погоды для ${city}...</span></div>`;
@@ -842,8 +915,7 @@
                 if (result.error) {
                     card.innerHTML = `
                         <div style="text-align: center; padding: 20px; color: #ff9999;">
-                            ❌ ${result.message}<br>
-                            <span style="font-size: 0.8rem; opacity: 0.7;">Проверьте API-ключ</span>
+                            ❌ ${result.message}
                         </div>
                     `;
                     return;
@@ -851,7 +923,6 @@
                 
                 const w = result.data;
                 
-                // Направление ветра
                 const windDirRu = {
                     'N': '⬆️ С', 'NNE': '↗️ ССВ', 'NE': '↗️ СВ', 'ENE': '↗️ ВСВ',
                     'E': '➡️ В', 'ESE': '↘️ ВЮВ', 'SE': '↘️ ЮВ', 'SSE': '↘️ ЮЮВ',
@@ -909,37 +980,239 @@
                 }
             }
             
-            // Загружаем погоду для текущего города
             loadWeather(win, currentCity);
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ---------- КАЛЬКУЛЯТОР ----------
+        function createCalculator() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg>
+                    <h2>Калькулятор</h2>
+                </div>
+                <div class="app-content">
+                    <div class="calc-display">0</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                        ${['C','÷','×','−',7,8,9,'+',4,5,6,'=',1,2,3,0,'.'].map(v => 
+                            `<div class="calc-btn">${v}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            const display = win.querySelector('.calc-display');
+            let current = '0', prev = '', op = null, reset = false;
+            
+            win.querySelectorAll('.calc-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const txt = btn.innerText;
+                    
+                    if (!isNaN(txt) || txt === '.') {
+                        if (txt === '.' && current.includes('.')) return;
+                        if (current === '0' || reset) { current = txt; reset = false; }
+                        else current += txt;
+                        display.innerText = current.slice(0, 12);
+                    } else if (txt === 'C') {
+                        current = '0'; prev = ''; op = null; reset = false;
+                        display.innerText = '0';
+                    } else if (txt === '=') {
+                        if (op) {
+                            const a = parseFloat(prev), b = parseFloat(current);
+                            if (!isNaN(a) && !isNaN(b)) {
+                                if (op === '+') current = (a + b).toString();
+                                else if (op === '−') current = (a - b).toString();
+                                else if (op === '×') current = (a * b).toString();
+                                else if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
+                            }
+                        }
+                        op = null; prev = ''; reset = true;
+                        display.innerText = current.slice(0, 12);
+                    } else if (['+', '−', '×', '÷'].includes(txt)) {
+                        if (op && !reset) {
+                            const a = parseFloat(prev), b = parseFloat(current);
+                            if (!isNaN(a) && !isNaN(b)) {
+                                if (op === '+') current = (a + b).toString();
+                                else if (op === '−') current = (a - b).toString();
+                                else if (op === '×') current = (a * b).toString();
+                                else if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
+                            }
+                        }
+                        prev = current; op = txt; reset = true;
+                        display.innerText = current.slice(0, 12);
+                    }
+                });
+            });
             
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
         }
 
-        // ---------- ОСТАЛЬНЫЕ ПРИЛОЖЕНИЯ (СОКРАЩЕННО) ----------
-        function createCalculator() { closeCurrentApp(); const win = document.createElement('div'); win.className = 'neon-app calculator-app'; win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg><h2>Calc</h2></div><div class="app-content"><div class="calc-display" style="background:rgba(0,0,0,0.5); padding:0.5em; border-radius:14px; text-align:right; font-size:1.8rem;">0</div><div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px;">${['C','÷','×','−',7,8,9,'+',4,5,6,'=',1,2,3,0,'.'].map(v => `<div style="background:rgba(20,25,40,0.7); padding:0.7em; border-radius:16px; text-align:center; cursor:pointer;">${v}</div>`).join('')}</div></div>`; document.body.appendChild(win); 
-            let display = win.querySelector('.calc-display'); let current='0', prev='', op=null, reset=false; 
-            win.querySelectorAll('.calc-btn, .calc-app div[style*="cursor:pointer"]').forEach(btn => btn.addEventListener('click', (e) => { 
-                e.stopPropagation(); let txt = btn.innerText; 
-                if (!isNaN(txt)||txt==='.') { if (txt==='.' && current.includes('.')) return; if (current==='0'||reset) { current=txt; reset=false; } else current+=txt; display.innerText=current.slice(0,12); } 
-                else if (txt==='C') { current='0'; prev=''; op=null; reset=false; display.innerText='0'; } 
-                else if (txt==='=') { if (op) { let a=parseFloat(prev), b=parseFloat(current); if (!isNaN(a)&&!isNaN(b)) { if (op==='+') current=(a+b).toString(); else if (op==='−') current=(a-b).toString(); else if (op==='×') current=(a*b).toString(); else if (op==='÷') current=b!==0?(a/b).toString():'ERR'; } } op=null; prev=''; reset=true; display.innerText=current.slice(0,12); } 
-                else if (['+','−','×','÷'].includes(txt)) { if (op&&!reset) { let a=parseFloat(prev), b=parseFloat(current); if (!isNaN(a)&&!isNaN(b)) { if (op==='+') current=(a+b).toString(); else if (op==='−') current=(a-b).toString(); else if (op==='×') current=(a*b).toString(); else if (op==='÷') current=b!==0?(a/b).toString():'ERR'; } } prev=current; op=txt; reset=true; display.innerText=current.slice(0,12); } 
-            })); win.querySelector('.app-close').addEventListener('click',()=>win.remove()); }
-        
-        function createNotesApp() { closeCurrentApp(); const win = document.createElement('div'); win.className = 'neon-app notes-app'; win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5m-5.273-9.955a3.75 3.75 0 0 1 5.304 0l6.19 6.19a3.75 3.75 0 0 1 0 5.304l-4.095 4.095a3.75 3.75 0 0 1-5.304 0l-6.19-6.19a3.75 3.75 0 0 1 0-5.304l1.095-1.095Z"/></svg><h2>Заметки</h2></div><div class="app-content"><div id="todoList">${['⚡ Неоновая тема','🧮 Калькулятор','🌤 Погода API'].map(t => `<div style="display:flex; align-items:center; gap:8px; padding:0.3em;"><span style="width:18px; height:18px; border:1.5px solid hsl(var(--hue1),70%,70%); border-radius:4px;"></span><span>${t}</span></div>`).join('')}</div><div style="display:flex; margin-top:12px;"><input id="newTodoInput" style="flex:1; background:rgba(0,0,0,0.4); border:none; border-radius:20px; padding:0.5em; color:white;" placeholder="новая задача..."><button id="addTodoBtn" style="background:hsl(var(--hue1),70%,60%); border:none; border-radius:20px; padding:0 1.2em; margin-left:8px;">➕</button></div></div>`; document.body.appendChild(win); 
-            win.querySelector('#addTodoBtn').addEventListener('click', ()=>{ let inp = win.querySelector('#newTodoInput'); if(inp.value.trim()){ let item = document.createElement('div'); item.style = 'display:flex; align-items:center; gap:8px; padding:0.3em;'; item.innerHTML = `<span style="width:18px; height:18px; border:1.5px solid hsl(var(--hue1),70%,70%); border-radius:4px; cursor:pointer;" onclick="this.classList.toggle('done')"></span><span>${inp.value}</span>`; win.querySelector('#todoList').appendChild(item); inp.value = ''; } }); 
-            win.querySelector('.app-close').addEventListener('click',()=>win.remove()); }
-        
-        function createMusicApp() { closeCurrentApp(); const win = document.createElement('div'); win.className = 'neon-app music-app'; win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a2.25 2.25 0 0 1-2.673-1.632l-.377-1.32a2.25 2.25 0 0 1 1.632-2.673L19.5 9.553Z"/></svg><h2>Музыка</h2></div><div class="app-content"><div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;"><span style="background:hsl(var(--hue1),70%,60%); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">▶</span><span><b>Neon Dreams</b><br>Wave</span></div><div style="display:flex; align-items:center; gap:12px;"><span style="background:rgba(255,255,255,0.2); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;">▶</span><span><b>Glass City</b><br>Synth</span></div></div>`; document.body.appendChild(win); 
-            win.querySelectorAll('span[style*="cursor:pointer"]').forEach(b => b.addEventListener('click',e=>{ e.stopPropagation(); b.textContent=b.textContent==='▶'?'⏸':'▶'; })); win.querySelector('.app-close').addEventListener('click',()=>win.remove()); }
-        
-        function createTerminalApp() { closeCurrentApp(); const win = document.createElement('div'); win.className = 'neon-app terminal-app'; win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg><h2>Terminal</h2></div><div class="app-content" style="font-family:'JetBrains Mono';">❯ neon@glass:~$<br>✓ Погода API активна<br>❯ echo \$CITY<br>${localStorage.getItem('weather_selected_city')||'Москва'}</div>`; document.body.appendChild(win); win.querySelector('.app-close').addEventListener('click',()=>win.remove()); }
-        
-        function createTimerApp() { closeCurrentApp(); const win = document.createElement('div'); win.className = 'neon-app timer-app'; win.innerHTML = `<button class="app-close">✕</button><div class="app-header"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg><h2>Таймер</h2></div><div class="app-content"><div style="font-size:3rem; font-family:monospace; text-align:center;">05:00</div><div style="display:flex; gap:12px; justify-content:center; margin-top:12px;"><button id="startTimerBtn" style="background:hsl(var(--hue1),70%,60%); border:none; padding:0.5em 2em; border-radius:30px;">Старт</button><button id="resetTimerBtn" style="background:rgba(255,255,255,0.2); border:none; padding:0.5em 2em; border-radius:30px;">Сброс</button></div></div>`; document.body.appendChild(win); 
-            let t, l=300, d=win.querySelector('.timer-app div[style*="font-size:3rem"]'); 
-            win.querySelector('#startTimerBtn').addEventListener('click', function(){ if(t) clearInterval(t); t=setInterval(()=>{if(l>0){l--; let m=Math.floor(l/60), s=l%60; d.innerText=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;}},1000); this.textContent='Пауза'; }); 
-            win.querySelector('#resetTimerBtn').addEventListener('click', ()=>{ l=300; d.innerText='05:00'; if(t) clearInterval(t); win.querySelector('#startTimerBtn').textContent='Старт'; }); 
-            win.querySelector('.app-close').addEventListener('click',()=>win.remove()); }
+        // ---------- ЗАМЕТКИ ----------
+        function createNotesApp() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5m-5.273-9.955a3.75 3.75 0 0 1 5.304 0l6.19 6.19a3.75 3.75 0 0 1 0 5.304l-4.095 4.095a3.75 3.75 0 0 1-5.304 0l-6.19-6.19a3.75 3.75 0 0 1 0-5.304l1.095-1.095Z"/></svg>
+                    <h2>Заметки</h2>
+                </div>
+                <div class="app-content">
+                    <div id="todoList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
+                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
+                            <span>⚡ Неоновая тема</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
+                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
+                            <span>🧮 Рабочий калькулятор</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 0.3em;">
+                            <span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span>
+                            <span>🌤 Погода через API</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <input id="newTodoInput" type="text" placeholder="Новая задача..." style="flex: 1; background: rgba(0,0,0,0.4); border: none; border-radius: 20px; padding: 0.6em 1em; color: white;">
+                        <button id="addTodoBtn" style="background: hsl(var(--hue1),70%,60%); border: none; border-radius: 20px; padding: 0 1.5em; color: white; cursor: pointer;">Добавить</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            win.querySelector('#addTodoBtn').addEventListener('click', () => {
+                const inp = win.querySelector('#newTodoInput');
+                if (inp.value.trim()) {
+                    const item = document.createElement('div');
+                    item.style = 'display: flex; align-items: center; gap: 8px; padding: 0.3em;';
+                    item.innerHTML = `<span style="width: 18px; height: 18px; border: 1.5px solid hsl(var(--hue1),70%,70%); border-radius: 4px; cursor: pointer;" onclick="this.classList.toggle('done')"></span><span>${inp.value}</span>`;
+                    win.querySelector('#todoList').appendChild(item);
+                    inp.value = '';
+                }
+            });
+            
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ---------- МУЗЫКА ----------
+        function createMusicApp() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a2.25 2.25 0 0 1-2.673-1.632l-.377-1.32a2.25 2.25 0 0 1 1.632-2.673L19.5 9.553Z"/></svg>
+                    <h2>Музыка</h2>
+                </div>
+                <div class="app-content">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 0.8em; border-radius: 30px;">
+                        <span style="background: hsl(var(--hue1),70%,60%); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.4rem;">▶</span>
+                        <div>
+                            <b>Neon Dreams</b><br>
+                            <span style="opacity: 0.7;">Wave</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px; background: rgba(0,0,0,0.3); padding: 0.8em; border-radius: 30px;">
+                        <span style="background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.4rem;">▶</span>
+                        <div>
+                            <b>Glass City</b><br>
+                            <span style="opacity: 0.7;">Synth</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            win.querySelectorAll('span[style*="cursor: pointer"]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    btn.textContent = btn.textContent === '▶' ? '⏸' : '▶';
+                });
+            });
+            
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ---------- ТЕРМИНАЛ ----------
+        function createTerminalApp() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>
+                    <h2>Терминал</h2>
+                </div>
+                <div class="app-content" style="font-family: 'JetBrains Mono';">
+                    <div style="color: #9dd0ff;">❯ neon@glass:~$</div>
+                    <div style="color: #a0f0aa;">✓ Погода API активна</div>
+                    <div style="color: #9dd0ff;">❯ echo \$CITY</div>
+                    <div style="color: white;">${localStorage.getItem('weather_selected_city') || 'Москва'}</div>
+                    <div style="color: #9dd0ff; margin-top: 8px;">❯ echo \$THEME</div>
+                    <div style="color: white;">hue1: ${$hue1.value} · hue2: ${$hue2.value}</div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ---------- ТАЙМЕР ----------
+        function createTimerApp() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg>
+                    <h2>Таймер</h2>
+                </div>
+                <div class="app-content">
+                    <div style="font-size: 3rem; font-family: monospace; text-align: center; margin-bottom: 20px;" id="timerDisplay">05:00</div>
+                    <div style="display: flex; gap: 12px; justify-content: center;">
+                        <button id="startTimerBtn" style="background: hsl(var(--hue1),70%,60%); border: none; padding: 0.6em 2em; border-radius: 30px; color: white; cursor: pointer;">Старт</button>
+                        <button id="resetTimerBtn" style="background: rgba(255,255,255,0.2); border: none; padding: 0.6em 2em; border-radius: 30px; color: white; cursor: pointer;">Сброс</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(win);
+            
+            let timerInterval, timeLeft = 300;
+            const display = win.querySelector('#timerDisplay');
+            
+            win.querySelector('#startTimerBtn').addEventListener('click', function() {
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        const m = Math.floor(timeLeft / 60);
+                        const s = timeLeft % 60;
+                        display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    } else {
+                        clearInterval(timerInterval);
+                    }
+                }, 1000);
+                this.textContent = 'Пауза';
+            });
+            
+            win.querySelector('#resetTimerBtn').addEventListener('click', () => {
+                timeLeft = 300;
+                display.innerText = '05:00';
+                if (timerInterval) clearInterval(timerInterval);
+                win.querySelector('#startTimerBtn').textContent = 'Старт';
+            });
+            
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
 
         // ---------- ЗАПУСК ПРИЛОЖЕНИЙ ----------
         const appLauncher = {
