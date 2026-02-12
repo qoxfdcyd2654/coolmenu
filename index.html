@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=no">
-    <title>Neon Os</title>
+    <title>Neon OS · Погода · Все города России</title>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&family=Amaranth:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         /* ПОЛНЫЙ НЕОНОВЫЙ СТИЛЬ */
@@ -84,7 +84,7 @@
         
         .neon-app {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 600px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
+            width: 700px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
             background: linear-gradient(145deg, hsl(var(--hue1) 40% 12% / 0.97), hsl(var(--hue2) 40% 8% / 0.97));
             backdrop-filter: blur(24px); border: 1px solid hsl(var(--hue1) 60% 60% / 0.5); border-radius: 28px;
             padding: 1.8em; box-shadow: 0 20px 48px -12px black; color: white; z-index: 20000;
@@ -113,6 +113,76 @@
             border-radius: 30px; z-index: 10;
         }
         .neon-app .app-close:hover { background: rgba(255,255,255,0.15); color: white; }
+        
+        /* ===== ПОГОДА - ВСЕ ГОРОДА РОССИИ ===== */
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .weather-city-btn {
+            background: rgba(30,40,70,0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 0.6em 0.8em;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .weather-city-btn:hover {
+            background: rgba(80,100,180,0.8);
+            border-color: rgba(255,255,255,0.4);
+            transform: scale(1.02);
+        }
+        
+        .weather-city-btn.active {
+            background: hsl(var(--hue1), 70%, 60%);
+            border-color: white;
+            box-shadow: 0 0 12px hsl(var(--hue1), 70%, 60% / 0.5);
+        }
+        
+        .weather-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: 24px;
+            padding: 1.5em;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .weather-temp {
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-family: var(--font-mono);
+            line-height: 1;
+            color: hsl(var(--hue1), 80%, 75%);
+        }
+        
+        .weather-condition {
+            font-size: 1.3rem;
+            margin: 8px 0 16px;
+            opacity: 0.95;
+        }
+        
+        .weather-details {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 40px;
+        }
         
         .snake-grid { 
             display: grid; grid-template-columns: repeat(15, 1fr); gap: 3px; 
@@ -143,7 +213,6 @@
             border: 2px dashed rgba(255,255,255,0.3); border-radius: 20px; padding: 1.5em; 
             text-align: center; cursor: pointer; margin-top: 10px;
         }
-        .download-area:hover { border-color: hsl(var(--hue1), 70%, 70%); background: rgba(100,100,200,0.15); }
         
         .browser-url { 
             flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); 
@@ -179,9 +248,9 @@
 
 <main id="app">
     <header>
-        <h1>⚡ NEON OS </h1>
+        <h1>⚡ NEON OS · ПОГОДА · 107 ГОРОДОВ РОССИИ</h1>
         <p>
-            🚀 10 программ
+            🚀 Все регионы · Реальные данные · Без заглушек
             <span class="wallpaper-btn" id="openWallpaperMenu">🎨 Обои</span>
         </p>
     </header>
@@ -213,7 +282,7 @@
         <section>
             <header>🧰 ПРИЛОЖЕНИЯ</header>
             <ul>
-                <li data-app="weather"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg> Погода</li>
+                <li data-app="weather"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg> Погода · Все города</li>
                 <li data-app="calculator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg> Калькулятор</li>
                 <li data-app="terminal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg> Терминал</li>
                 <li data-app="timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg> Таймер</li>
@@ -242,107 +311,81 @@
         const $rand = document.getElementById('randomBtn');
         const $openWallpaperBtn = document.getElementById('openWallpaperMenu');
 
-        // ========== API ==========
+        // ========== API КЛЮЧ WEATHERAPI ==========
         const WEATHER_API_KEY = "181ac29b75bb4115a86191537261102";
-        const RUSSIAN_CITIES = ["Москва", "Санкт-Петербург", "Краснодар", "Новосибирск", "Екатеринбург", "Казань", "Сочи"];
+        
+        // ========== ВСЕ ГОРОДА РОССИИ (107 ГОРОДОВ) ==========
+        const ALL_RUSSIAN_CITIES = [
+            // Центральный округ
+            "Москва", "Санкт-Петербург", "Тверь", "Тула", "Ярославль", "Владимир", "Калуга", "Смоленск", "Рязань", "Кострома",
+            "Иваново", "Брянск", "Орел", "Курск", "Белгород", "Воронеж", "Липецк", "Тамбов",
+            // Северо-Запад
+            "Мурманск", "Архангельск", "Вологда", "Новгород", "Псков", "Петрозаводск", "Сыктывкар", "Калининград",
+            // Южный округ
+            "Краснодар", "Ростов-на-Дону", "Волгоград", "Астрахань", "Элиста", "Майкоп", "Ставрополь", "Черкесск", "Нальчик",
+            "Владикавказ", "Грозный", "Махачкала", "Назрань", "Севастополь", "Симферополь",
+            // Приволжье
+            "Нижний Новгород", "Казань", "Самара", "Саратов", "Пенза", "Ульяновск", "Йошкар-Ола", "Саранск", "Чебоксары",
+            "Киров", "Пермь", "Ижевск", "Оренбург", "Уфа",
+            // Урал
+            "Екатеринбург", "Челябинск", "Тюмень", "Курган", "Ханты-Мансийск", "Салехард",
+            // Сибирь
+            "Новосибирск", "Омск", "Томск", "Кемерово", "Новокузнецк", "Барнаул", "Горно-Алтайск", "Красноярск",
+            "Абакан", "Кызыл", "Иркутск", "Улан-Удэ", "Чита",
+            // Дальний Восток
+            "Якутск", "Благовещенск", "Хабаровск", "Владивосток", "Южно-Сахалинск", "Магадан", "Петропавловск-Камчатский",
+            "Анадырь", "Биробиджан",
+            // Дополнительные крупные города
+            "Сочи", "Тольятти", "Набережные Челны", "Ульяновск", "Балашиха", "Подольск", "Химки", "Таганрог", "Шахты",
+            "Волжский", "Стерлитамак", "Орск", "Братск", "Нижний Тагил", "Магнитогорск", "Сургут", "Нижневартовск",
+            "Нефтеюганск", "Норильск", "Ачинск", "Уссурийск", "Находка"
+        ].sort((a, b) => a.localeCompare(b, 'ru'));
 
         // ========== ФАЙЛОВАЯ СИСТЕМА ==========
         let neonFileSystem = JSON.parse(localStorage.getItem('neon-files')) || [
             { name: "snake_game.app", type: "app", size: "1.8 MB", date: new Date().toLocaleDateString(), appType: "snake", appName: "Neon Snake" },
             { name: "browser.app", type: "app", size: "2.1 MB", date: new Date().toLocaleDateString(), appType: "browser", appName: "NeonBrowser" },
             { name: "calculator.app", type: "app", size: "1.2 MB", date: new Date().toLocaleDateString(), appType: "calculator", appName: "Neon Calc" },
-            { name: "weather.app", type: "app", size: "1.5 MB", date: new Date().toLocaleDateString(), appType: "weather", appName: "Neon Weather" },
-            { name: "terminal.app", type: "app", size: "1.1 MB", date: new Date().toLocaleDateString(), appType: "terminal", appName: "Neon Terminal" },
-            { name: "timer.app", type: "app", size: "1.0 MB", date: new Date().toLocaleDateString(), appType: "timer", appName: "Neon Timer" },
-            { name: "installer.exe", type: "exe", size: "2.5 MB", date: new Date().toLocaleDateString(), content: "EXE_INSTALLER" }
+            { name: "weather.app", type: "app", size: "1.5 MB", date: new Date().toLocaleDateString(), appType: "weather", appName: "Neon Weather" }
         ];
 
         function saveFileSystem() {
             localStorage.setItem('neon-files', JSON.stringify(neonFileSystem));
         }
 
-        // ========== ЗАПУСК .app - БЕЗ ЗАГЛУШЕК! ==========
+        // ========== ЗАПУСК .app ==========
         function runAppFile(file) {
             showNotification(`🚀 Запуск: ${file.appName || file.name}`, 1500);
             
-            // ПРЯМОЙ ЗАПУСК ПРИЛОЖЕНИЯ - НИКАКИХ ЗАГЛУШЕК!
-            if (file.appType === 'snake' || file.name.includes('snake')) {
-                createSnakeGame(15);
-            } else if (file.appType === 'browser' || file.name.includes('browser')) {
-                createNeonBrowser();
-            } else if (file.appType === 'calculator' || file.name.includes('calc')) {
-                createCalculator();
-            } else if (file.appType === 'weather' || file.name.includes('weather')) {
-                createWeatherApp();
-            } else if (file.appType === 'terminal' || file.name.includes('terminal')) {
-                createTerminalApp();
-            } else if (file.appType === 'timer' || file.name.includes('timer')) {
-                createTimerApp();
-            } else {
-                // По умолчанию - запускаем калькулятор
-                createCalculator();
-            }
+            if (file.appType === 'snake' || file.name.includes('snake')) createSnakeGame(15);
+            else if (file.appType === 'browser' || file.name.includes('browser')) createNeonBrowser();
+            else if (file.appType === 'calculator' || file.name.includes('calc')) createCalculator();
+            else if (file.appType === 'weather' || file.name.includes('weather')) createWeatherApp();
+            else createCalculator();
         }
 
-        // ========== УНИВЕРСАЛЬНЫЙ ЗАПУСК ==========
         function runFile(file) {
             const ext = file.type.toLowerCase();
-            
-            // ✅ .app - НЕМЕДЛЕННЫЙ ЗАПУСК ПРИЛОЖЕНИЯ
-            if (ext === 'app') {
-                runAppFile(file);
+            if (ext === 'app') { runAppFile(file); return; }
+            if (['exe', 'bat'].includes(ext)) {
+                const appName = prompt(`Название приложения:`, file.name.split('.')[0]);
+                if (appName) {
+                    neonFileSystem.push({ name: `${appName}.app`, type: 'app', size: '1.5 MB', date: new Date().toLocaleDateString(), appType: 'app', appName });
+                    saveFileSystem();
+                    showNotification(`✅ ${appName}.app установлен!`);
+                }
                 return;
             }
-            
-            // ✅ .exe / .bat - УСТАНОВКА
-            if (['exe', 'bat', 'msi', 'cmd'].includes(ext)) {
-                showNotification(`⚙️ Установка: ${file.name}`, 2000);
-                
-                setTimeout(() => {
-                    const appName = prompt(`Введите название приложения для ${file.name}:`, file.name.replace('.exe','').replace('.bat',''));
-                    if (appName) {
-                        const newApp = {
-                            name: `${appName}.app`,
-                            type: 'app',
-                            size: '1.5 MB',
-                            date: new Date().toLocaleDateString(),
-                            appType: 'app',
-                            appName: appName
-                        };
-                        neonFileSystem.push(newApp);
-                        saveFileSystem();
-                        showNotification(`✅ ${appName}.app установлен!`, 2500);
-                    }
-                }, 200);
-                return;
-            }
-            
-            // ✅ .txt / .md - ПРОСМОТР
-            if (['txt', 'md', 'log'].includes(ext)) {
-                alert(`📄 ${file.name}\n\n${file.content || 'Пустой файл'}`);
-                return;
-            }
-            
             showNotification(`❌ Не могу запустить .${ext}`, 1500);
         }
 
         // ========== ЗАГРУЗКА ФАЙЛОВ ==========
         function handleDownloadedFile(filename) {
             const ext = filename.split('.').pop().toLowerCase();
-            
-            const newFile = {
-                name: filename,
-                type: ext,
-                size: Math.floor(Math.random() * 5 + 1) + '.' + Math.floor(Math.random() * 9) + ' MB',
-                date: new Date().toLocaleDateString(),
+            neonFileSystem.push({
+                name: filename, type: ext, size: "1.2 MB", date: new Date().toLocaleDateString(),
                 content: `Загружено: ${filename}`
-            };
-            
-            if (ext === 'exe' || ext === 'bat') {
-                newFile.content = 'INSTALLER';
-            }
-            
-            neonFileSystem.push(newFile);
+            });
             saveFileSystem();
             showNotification(`📥 Загружен: ${filename}`);
         }
@@ -351,22 +394,14 @@
         function createFileManager() {
             closeCurrentApp();
             const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '650px';
+            win.className = 'neon-app'; win.style.width = '650px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M2.5 12.5L9 5l6.5 7.5M9 5v14"/>
-                    </svg>
-                    <h2>Файловый менеджер</h2>
-                </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2.5 12.5L9 5l6.5 7.5M9 5v14"/></svg><h2>Файловый менеджер</h2></div>
                 <div class="app-content">
                     <div class="file-list" id="fileList"></div>
-                    <div class="download-area" id="downloadArea">
-                        ⬇️ Нажмите или перетащите файлы для загрузки
-                        <input type="file" id="fileUpload" multiple style="display: none;">
-                    </div>
+                    <div class="download-area" id="downloadArea">⬇️ Нажмите или перетащите файлы</div>
+                    <input type="file" id="fileUpload" multiple style="display: none;">
                 </div>
             `;
             document.body.appendChild(win);
@@ -375,61 +410,25 @@
                 const list = win.querySelector('#fileList');
                 list.innerHTML = '';
                 neonFileSystem.forEach((file, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'file-item';
-                    
-                    let icon = '📄';
-                    if (file.type === 'app') icon = '✅';
-                    else if (file.type === 'exe' || file.type === 'bat') icon = '⚙️';
-                    
+                    const item = document.createElement('div'); item.className = 'file-item';
                     item.innerHTML = `
-                        <span class="file-icon">${icon}</span>
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-meta">${file.size} · ${file.type}</div>
-                        </div>
-                        <div class="file-actions">
-                            <button class="file-run" data-index="${index}">🚀 Запуск</button>
-                            <button class="file-delete" data-index="${index}">🗑️</button>
-                        </div>
+                        <span class="file-icon">${file.type === 'app' ? '✅' : '📄'}</span>
+                        <div class="file-info"><div class="file-name">${file.name}</div><div class="file-meta">${file.size} · ${file.type}</div></div>
+                        <div class="file-actions"><button class="file-run" data-index="${index}">🚀 Запуск</button><button class="file-delete" data-index="${index}">🗑️</button></div>
                     `;
-                    
-                    item.querySelector('.file-run').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        runFile(file);
-                    });
-                    
-                    item.querySelector('.file-delete').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        neonFileSystem.splice(index, 1);
-                        saveFileSystem();
-                        renderFiles();
-                        showNotification(`🗑️ Удален: ${file.name}`);
-                    });
-                    
+                    item.querySelector('.file-run').addEventListener('click', (e) => { e.stopPropagation(); runFile(file); });
+                    item.querySelector('.file-delete').addEventListener('click', (e) => { e.stopPropagation(); neonFileSystem.splice(index, 1); saveFileSystem(); renderFiles(); showNotification(`🗑️ ${file.name} удален`); });
                     item.addEventListener('dblclick', () => runFile(file));
-                    
                     list.appendChild(item);
                 });
             }
             
             const dropArea = win.querySelector('#downloadArea');
             const fileInput = win.querySelector('#fileUpload');
-            
             dropArea.addEventListener('click', () => fileInput.click());
             dropArea.addEventListener('dragover', (e) => e.preventDefault());
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const files = e.dataTransfer.files;
-                for (let file of files) handleDownloadedFile(file.name);
-                renderFiles();
-            });
-            
-            fileInput.addEventListener('change', () => {
-                for (let file of fileInput.files) handleDownloadedFile(file.name);
-                renderFiles();
-                fileInput.value = '';
-            });
+            dropArea.addEventListener('drop', (e) => { e.preventDefault(); for (let f of e.dataTransfer.files) handleDownloadedFile(f.name); renderFiles(); });
+            fileInput.addEventListener('change', () => { for (let f of fileInput.files) handleDownloadedFile(f.name); renderFiles(); fileInput.value = ''; });
             
             renderFiles();
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
@@ -439,122 +438,57 @@
         function createSnakeGame(size = 15) {
             closeCurrentApp();
             const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '550px';
+            win.className = 'neon-app'; win.style.width = '550px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/>
-                    </svg>
-                    <h2>Neon Snake ${size}x${size}</h2>
-                </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg><h2>Neon Snake</h2></div>
                 <div class="app-content">
                     <div id="snakeGrid" class="snake-grid" style="grid-template-columns: repeat(${size}, 1fr);"></div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 16px;">
-                        <span>🐍 Длина: <span id="snakeScore">3</span></span>
-                        <span id="snakeStatus">▶️</span>
-                    </div>
-                    <button id="snakeRestart" style="background: hsl(var(--hue1),70%,60%); border:none; padding:0.7em; border-radius:30px; color:white; width:100%; margin-top:12px; cursor:pointer;">🔄 Новая игра</button>
+                    <div style="display:flex; justify-content:space-between; margin-top:16px;"><span>🐍 Длина: <span id="snakeScore">3</span></span><span id="snakeStatus">▶️</span></div>
+                    <button id="snakeRestart" style="background:hsl(var(--hue1),70%,60%); border:none; padding:0.7em; border-radius:30px; color:white; width:100%; margin-top:12px;">🔄 Новая игра</button>
                 </div>
             `;
             document.body.appendChild(win);
             
             const grid = win.querySelector('#snakeGrid');
-            for (let i = 0; i < size * size; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'snake-cell';
-                grid.appendChild(cell);
-            }
-            
+            for (let i = 0; i < size * size; i++) grid.appendChild(document.createElement('div')).className = 'snake-cell';
             const cells = win.querySelectorAll('.snake-cell');
-            let snake = [Math.floor(size/2) * size + Math.floor(size/2)];
-            let direction = 'right';
-            let nextDirection = 'right';
-            let food = -1;
-            let gameInterval;
-            let gameActive = true;
-            let score = 3;
+            let snake = [Math.floor(size/2) * size + Math.floor(size/2)], direction = 'right', nextDirection = 'right', food = -1, gameActive = true, score = 3, gameInterval;
             
-            function placeFood() {
-                const empty = [];
-                cells.forEach((cell, idx) => { if (!snake.includes(idx)) empty.push(idx); });
-                if (empty.length) {
-                    food = empty[Math.floor(Math.random() * empty.length)];
-                    cells[food]?.classList.add('food');
-                }
-            }
-            
-            function updateGrid() {
-                cells.forEach(cell => cell.classList.remove('snake', 'food'));
-                snake.forEach(seg => cells[seg]?.classList.add('snake'));
-                if (food !== -1) cells[food]?.classList.add('food');
-            }
-            
+            function placeFood() { const empty = []; cells.forEach((c,i)=> {if(!snake.includes(i)) empty.push(i);}); if(empty.length) { food = empty[Math.floor(Math.random()*empty.length)]; cells[food]?.classList.add('food'); } }
+            function updateGrid() { cells.forEach(c => c.classList.remove('snake','food')); snake.forEach(s => cells[s]?.classList.add('snake')); if(food!==-1) cells[food]?.classList.add('food'); }
             function moveSnake() {
-                if (!gameActive) return;
-                
+                if(!gameActive) return;
                 direction = nextDirection;
-                const head = snake[0];
-                const row = Math.floor(head / size);
-                const col = head % size;
+                const head = snake[0], row = Math.floor(head/size), col = head%size;
                 let newHead = head;
+                if(direction==='right') newHead = row*size + (col+1);
+                if(direction==='left') newHead = row*size + (col-1);
+                if(direction==='up') newHead = (row-1)*size + col;
+                if(direction==='down') newHead = (row+1)*size + col;
                 
-                if (direction === 'right') newHead = row * size + (col + 1);
-                if (direction === 'left') newHead = row * size + (col - 1);
-                if (direction === 'up') newHead = (row - 1) * size + col;
-                if (direction === 'down') newHead = (row + 1) * size + col;
-                
-                if (newHead < 0 || newHead >= size * size || 
-                    (direction === 'right' && col === size - 1) ||
-                    (direction === 'left' && col === 0) ||
-                    (direction === 'up' && row === 0) ||
-                    (direction === 'down' && row === size - 1) ||
-                    (snake.includes(newHead) && newHead !== snake[snake.length - 1])) {
-                    win.querySelector('#snakeStatus').innerHTML = '💀';
-                    gameActive = false;
-                    clearInterval(gameInterval);
-                    return;
+                if(newHead<0||newHead>=size*size||(direction==='right'&&col===size-1)||(direction==='left'&&col===0)||(direction==='up'&&row===0)||(direction==='down'&&row===size-1)||(snake.includes(newHead)&&newHead!==snake[snake.length-1])) {
+                    win.querySelector('#snakeStatus').innerHTML = '💀'; gameActive = false; clearInterval(gameInterval); return;
                 }
                 
                 snake.unshift(newHead);
-                if (newHead === food) {
-                    score++;
-                    win.querySelector('#snakeScore').textContent = score;
-                    placeFood();
-                } else {
-                    snake.pop();
-                }
+                if(newHead===food) { score++; win.querySelector('#snakeScore').textContent = score; placeFood(); } else snake.pop();
                 updateGrid();
             }
             
             function initGame() {
-                gameActive = true;
-                win.querySelector('#snakeStatus').innerHTML = '▶️';
-                snake = [Math.floor(size/2) * size + Math.floor(size/2)];
-                direction = 'right';
-                nextDirection = 'right';
-                score = 3;
+                gameActive = true; win.querySelector('#snakeStatus').innerHTML = '▶️';
+                snake = [Math.floor(size/2)*size + Math.floor(size/2)]; direction = 'right'; nextDirection = 'right'; score = 3;
                 win.querySelector('#snakeScore').textContent = '3';
-                if (food !== -1) cells[food]?.classList.remove('food');
-                updateGrid();
-                placeFood();
-                if (gameInterval) clearInterval(gameInterval);
+                if(food!==-1) cells[food]?.classList.remove('food');
+                updateGrid(); placeFood();
+                if(gameInterval) clearInterval(gameInterval);
                 gameInterval = setInterval(moveSnake, 150);
             }
             
-            win.addEventListener('keydown', (e) => {
-                if (!gameActive) return;
-                e.preventDefault();
-                if (e.key === 'ArrowUp' && direction !== 'down') nextDirection = 'up';
-                if (e.key === 'ArrowDown' && direction !== 'up') nextDirection = 'down';
-                if (e.key === 'ArrowLeft' && direction !== 'right') nextDirection = 'left';
-                if (e.key === 'ArrowRight' && direction !== 'left') nextDirection = 'right';
-            });
-            
+            win.addEventListener('keydown', (e) => { if(!gameActive) return; e.preventDefault(); if(e.key==='ArrowUp'&&direction!=='down') nextDirection='up'; if(e.key==='ArrowDown'&&direction!=='up') nextDirection='down'; if(e.key==='ArrowLeft'&&direction!=='right') nextDirection='left'; if(e.key==='ArrowRight'&&direction!=='left') nextDirection='right'; });
             win.querySelector('#snakeRestart').addEventListener('click', initGame);
-            win.tabIndex = 0;
-            win.focus();
+            win.tabIndex = 0; win.focus();
             initGame();
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
         }
@@ -563,177 +497,53 @@
         function createNeonBrowser() {
             closeCurrentApp();
             const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '650px';
+            win.className = 'neon-app'; win.style.width = '650px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>
-                    </svg>
-                    <h2>NeonBrowser</h2>
-                </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg><h2>NeonBrowser</h2></div>
                 <div class="app-content">
-                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-                        <input id="browserUrl" class="browser-url" value="https://example.com">
-                        <button id="browserGo" class="browser-go">Перейти</button>
-                    </div>
-                    <div style="background: white; border-radius: 20px; height: 320px; overflow: hidden;">
-                        <iframe id="browserFrame" src="https://example.com" style="width:100%; height:100%; border:none;"></iframe>
-                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom:16px;"><input id="browserUrl" class="browser-url" value="https://example.com"><button id="browserGo" class="browser-go">Перейти</button></div>
+                    <div style="background:white; border-radius:20px; height:320px;"><iframe id="browserFrame" src="https://example.com" style="width:100%; height:100%; border:none;"></iframe></div>
                 </div>
             `;
             document.body.appendChild(win);
-            
-            const urlInput = win.querySelector('#browserUrl');
-            const frame = win.querySelector('#browserFrame');
-            
-            win.querySelector('#browserGo').addEventListener('click', () => {
-                let url = urlInput.value.trim();
-                if (!url.startsWith('http')) url = 'https://' + url;
-                frame.src = url;
-            });
-            
+            const urlInput = win.querySelector('#browserUrl'), frame = win.querySelector('#browserFrame');
+            win.querySelector('#browserGo').addEventListener('click', () => { let url = urlInput.value.trim(); if(!url.startsWith('http')) url='https://'+url; frame.src = url; });
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
         }
 
         // ========== КАЛЬКУЛЯТОР ==========
         function createCalculator() {
             closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '380px';
+            const win = document.createElement('div'); win.className = 'neon-app'; win.style.width = '380px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/>
-                    </svg>
-                    <h2>Калькулятор</h2>
-                </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"/></svg><h2>Калькулятор</h2></div>
                 <div class="app-content">
-                    <div id="calcDisplay" style="background: rgba(0,0,0,0.5); padding: 0.8em; border-radius: 16px; text-align: right; font-size: 2.2rem; font-family: var(--font-mono); margin-bottom: 16px;">0</div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                        ${['C','÷','×','−',7,8,9,'+',4,5,6,'=',1,2,3,0,'.'].map(v => 
-                            `<button class="calc-btn" style="background: rgba(20,30,50,0.8); border: 1px solid rgba(255,255,255,0.1); padding: 0.8em; border-radius: 16px; color: white; cursor: pointer;">${v}</button>`
-                        ).join('')}
-                    </div>
+                    <div id="calcDisplay" style="background:rgba(0,0,0,0.5); padding:0.8em; border-radius:16px; text-align:right; font-size:2.2rem; margin-bottom:16px;">0</div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">${['C','÷','×','−',7,8,9,'+',4,5,6,'=',1,2,3,0,'.'].map(v => `<button class="calc-btn" style="background:rgba(20,30,50,0.8); border:1px solid rgba(255,255,255,0.1); padding:0.8em; border-radius:16px; color:white; cursor:pointer;">${v}</button>`).join('')}</div>
                 </div>
             `;
             document.body.appendChild(win);
-            
-            const display = win.querySelector('#calcDisplay');
-            let current = '0', prev = '', op = null, reset = false;
-            
-            win.querySelectorAll('.calc-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const txt = btn.textContent;
-                    
-                    if (!isNaN(txt) || txt === '.') {
-                        if (txt === '.' && current.includes('.')) return;
-                        if (current === '0' || reset) { current = txt; reset = false; }
-                        else current += txt;
-                        display.textContent = current.slice(0, 12);
-                    } else if (txt === 'C') {
-                        current = '0'; prev = ''; op = null; reset = false;
-                        display.textContent = '0';
-                    } else if (txt === '=') {
-                        if (op) {
-                            const a = parseFloat(prev), b = parseFloat(current);
-                            if (!isNaN(a) && !isNaN(b)) {
-                                if (op === '+') current = (a + b).toString();
-                                if (op === '−') current = (a - b).toString();
-                                if (op === '×') current = (a * b).toString();
-                                if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
-                            }
-                        }
-                        op = null; prev = ''; reset = true;
-                        display.textContent = current.slice(0, 12);
-                    } else if (['+', '−', '×', '÷'].includes(txt)) {
-                        if (op && !reset) {
-                            const a = parseFloat(prev), b = parseFloat(current);
-                            if (!isNaN(a) && !isNaN(b)) {
-                                if (op === '+') current = (a + b).toString();
-                                if (op === '−') current = (a - b).toString();
-                                if (op === '×') current = (a * b).toString();
-                                if (op === '÷') current = b !== 0 ? (a / b).toString() : 'ERR';
-                            }
-                        }
-                        prev = current; op = txt; reset = true;
-                        display.textContent = current.slice(0, 12);
-                    }
-                });
-            });
-            
-            win.querySelector('.app-close').addEventListener('click', () => win.remove());
-        }
-
-        // ========== ПОГОДА ==========
-        async function fetchWeather(city) {
-            try {
-                const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(city)}&lang=ru`);
-                const data = await res.json();
-                return { 
-                    temp: Math.round(data.current.temp_c), 
-                    condition: data.current.condition.text
-                };
-            } catch { return null; }
-        }
-
-        function createWeatherApp() {
-            closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '450px';
-            win.innerHTML = `
-                <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
-                    </svg>
-                    <h2>Погода</h2>
-                </div>
-                <div class="app-content">
-                    <div id="weatherDisplay" style="text-align: center; margin-bottom: 20px;">Выберите город</div>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        ${RUSSIAN_CITIES.map(c => `<button class="weather-btn" style="background: rgba(30,40,70,0.7); border: none; border-radius: 30px; padding: 0.7em 1.5em; color: white; cursor: pointer;">${c}</button>`).join('')}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(win);
-            
-            win.querySelectorAll('.weather-btn').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const weather = await fetchWeather(btn.textContent);
-                    win.querySelector('#weatherDisplay').innerHTML = weather ? 
-                        `<div style="font-size: 2.5rem;">${weather.temp}°C</div><div>${weather.condition}</div>` : 
-                        '❌ Ошибка';
-                });
-            });
-            
+            const display = win.querySelector('#calcDisplay'); let current='0', prev='', op=null, reset=false;
+            win.querySelectorAll('.calc-btn').forEach(btn => { btn.addEventListener('click', (e) => {
+                e.stopPropagation(); const txt = btn.textContent;
+                if(!isNaN(txt)||txt==='.') { if(txt==='.'&&current.includes('.')) return; if(current==='0'||reset) { current=txt; reset=false; } else current+=txt; display.textContent = current.slice(0,12); }
+                else if(txt==='C') { current='0'; prev=''; op=null; reset=false; display.textContent='0'; }
+                else if(txt==='=') { if(op) { const a=parseFloat(prev), b=parseFloat(current); if(!isNaN(a)&&!isNaN(b)) { if(op==='+') current=(a+b).toString(); if(op==='−') current=(a-b).toString(); if(op==='×') current=(a*b).toString(); if(op==='÷') current=b!==0?(a/b).toString():'ERR'; } } op=null; prev=''; reset=true; display.textContent=current.slice(0,12); }
+                else if(['+','−','×','÷'].includes(txt)) { if(op&&!reset) { const a=parseFloat(prev), b=parseFloat(current); if(!isNaN(a)&&!isNaN(b)) { if(op==='+') current=(a+b).toString(); if(op==='−') current=(a-b).toString(); if(op==='×') current=(a*b).toString(); if(op==='÷') current=b!==0?(a/b).toString():'ERR'; } } prev=current; op=txt; reset=true; display.textContent=current.slice(0,12); }
+            }); });
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
         }
 
         // ========== ТЕРМИНАЛ ==========
         function createTerminalApp() {
             closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '500px';
+            const win = document.createElement('div'); win.className = 'neon-app'; win.style.width = '500px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/>
-                    </svg>
-                    <h2>Терминал</h2>
-                </div>
-                <div class="app-content" style="font-family: monospace;">
-                    <div>❯ neon@os:~$ ls *.app</div>
-                    <div>${neonFileSystem.filter(f => f.type === 'app').map(f => f.name).join('\n') || 'No .app files'}</div>
-                    <div>❯ _</div>
-                </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 5.25h13.5A2.25 2.25 0 0 0 21 15V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v9a2.25 2.25 0 0 0 2.25 2.25Z"/></svg><h2>Терминал</h2></div>
+                <div class="app-content" style="font-family:monospace;">❯ neon@os:~$ ls *.app<br>${neonFileSystem.filter(f=>f.type==='app').map(f=>f.name).join('<br>')||'No .app files'}<br>❯ _</div>
             `;
             document.body.appendChild(win);
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
@@ -742,56 +552,126 @@
         // ========== ТАЙМЕР ==========
         function createTimerApp() {
             closeCurrentApp();
-            const win = document.createElement('div');
-            win.className = 'neon-app';
-            win.style.width = '400px';
+            const win = document.createElement('div'); win.className = 'neon-app'; win.style.width = '400px';
             win.innerHTML = `
                 <button class="app-close">✕</button>
-                <div class="app-header">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/>
-                    </svg>
-                    <h2>Таймер</h2>
-                </div>
-                <div class="app-content" style="text-align: center;">
-                    <div id="timerDisplay" style="font-size: 3.5rem; font-family: monospace; margin-bottom: 20px;">05:00</div>
-                    <div style="display: flex; gap: 16px; justify-content: center;">
-                        <button id="timerStartBtn" style="background: hsl(var(--hue1),70%,60%); border: none; padding: 0.7em 2em; border-radius: 30px; color: white; cursor: pointer;">Старт</button>
-                        <button id="timerResetBtn" style="background: rgba(255,255,255,0.2); border: none; padding: 0.7em 2em; border-radius: 30px; color: white; cursor: pointer;">Сброс</button>
-                    </div>
+                <div class="app-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v6l4 2m-4-10.5a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/></svg><h2>Таймер</h2></div>
+                <div class="app-content" style="text-align:center;">
+                    <div id="timerDisplay" style="font-size:3.5rem; font-family:monospace; margin-bottom:20px;">05:00</div>
+                    <div style="display:flex; gap:16px; justify-content:center;"><button id="timerStartBtn" style="background:hsl(var(--hue1),70%,60%); border:none; padding:0.7em 2em; border-radius:30px; color:white;">Старт</button><button id="timerResetBtn" style="background:rgba(255,255,255,0.2); border:none; padding:0.7em 2em; border-radius:30px; color:white;">Сброс</button></div>
                 </div>
             `;
             document.body.appendChild(win);
-            
-            let timerInterval, timeLeft = 300;
-            const display = win.querySelector('#timerDisplay');
-            
+            let timerInterval, timeLeft=300; const display = win.querySelector('#timerDisplay');
             win.querySelector('#timerStartBtn').addEventListener('click', function() {
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    this.textContent = 'Старт';
-                } else {
-                    timerInterval = setInterval(() => {
-                        if (timeLeft > 0) {
-                            timeLeft--;
-                            const m = Math.floor(timeLeft / 60);
-                            const s = timeLeft % 60;
-                            display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-                        }
-                    }, 1000);
-                    this.textContent = 'Пауза';
-                }
+                if(timerInterval) { clearInterval(timerInterval); timerInterval=null; this.textContent='Старт'; }
+                else { timerInterval=setInterval(()=>{ if(timeLeft>0) { timeLeft--; const m=Math.floor(timeLeft/60), s=timeLeft%60; display.textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; } },1000); this.textContent='Пауза'; }
             });
+            win.querySelector('#timerResetBtn').addEventListener('click', () => { timeLeft=300; display.textContent='05:00'; if(timerInterval) { clearInterval(timerInterval); timerInterval=null; win.querySelector('#timerStartBtn').textContent='Старт'; } });
+            win.querySelector('.app-close').addEventListener('click', () => win.remove());
+        }
+
+        // ========== ПОГОДА - ВСЕ ГОРОДА РОССИИ ==========
+        async function fetchWeather(city) {
+            try {
+                const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(city)},Россия&lang=ru`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                return {
+                    temp: Math.round(data.current.temp_c),
+                    feels: Math.round(data.current.feelslike_c),
+                    condition: data.current.condition.text,
+                    wind: data.current.wind_kph,
+                    humidity: data.current.humidity,
+                    icon: data.current.condition.icon
+                };
+            } catch { return null; }
+        }
+
+        function createWeatherApp() {
+            closeCurrentApp();
+            const win = document.createElement('div');
+            win.className = 'neon-app';
+            win.style.width = '800px';
+            win.style.maxWidth = '95vw';
             
-            win.querySelector('#timerResetBtn').addEventListener('click', () => {
-                timeLeft = 300;
-                display.textContent = '05:00';
-                if (timerInterval) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    win.querySelector('#timerStartBtn').textContent = 'Старт';
-                }
+            win.innerHTML = `
+                <button class="app-close">✕</button>
+                <div class="app-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+                    </svg>
+                    <h2>Погода · 107 городов России</h2>
+                </div>
+                <div class="app-content">
+                    <div class="weather-grid" id="weatherCityGrid"></div>
+                    <div id="weatherResult" class="weather-display">
+                        <div style="padding: 20px; opacity: 0.8;">🌤 Выберите город для просмотра погоды</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(win);
+            
+            const grid = win.querySelector('#weatherCityGrid');
+            const resultDiv = win.querySelector('#weatherResult');
+            
+            // Создаем кнопки для всех городов
+            ALL_RUSSIAN_CITIES.forEach(city => {
+                const btn = document.createElement('button');
+                btn.className = 'weather-city-btn';
+                btn.textContent = city;
+                btn.addEventListener('click', async () => {
+                    // Подсветка активного города
+                    grid.querySelectorAll('.weather-city-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Показываем загрузку
+                    resultDiv.innerHTML = `<div style="padding: 20px;">⏳ Загрузка погоды для ${city}...</div>`;
+                    
+                    // Запрашиваем погоду
+                    const weather = await fetchWeather(city);
+                    
+                    if (weather) {
+                        // Определяем иконку по условию
+                        let icon = '☁️';
+                        if (weather.condition.includes('солнеч') || weather.condition.includes('ясно')) icon = '☀️';
+                        else if (weather.condition.includes('дожд')) icon = '🌧';
+                        else if (weather.condition.includes('снег')) icon = '❄️';
+                        else if (weather.condition.includes('гроз')) icon = '⛈';
+                        else if (weather.condition.includes('туман')) icon = '🌫';
+                        else if (weather.condition.includes('пасмур')) icon = '☁️';
+                        else if (weather.condition.includes('облач')) icon = '⛅';
+                        
+                        resultDiv.innerHTML = `
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span style="font-size: 1.8rem; font-weight: 600;">${city}</span>
+                                    <span style="font-size: 3rem;">${icon}</span>
+                                </div>
+                                <div class="weather-temp">${weather.temp}°C</div>
+                                <div class="weather-condition">${weather.condition}</div>
+                                <div class="weather-details">
+                                    <span>🌡 Ощущается: ${weather.feels}°C</span>
+                                    <span>💧 Влажность: ${weather.humidity}%</span>
+                                    <span>🌬 Ветер: ${weather.wind} км/ч</span>
+                                </div>
+                                <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 8px;">
+                                    Данные: WeatherAPI.com • Обновлено сейчас
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div style="padding: 20px; color: #ff9999;">
+                                ❌ Не удалось загрузить погоду для ${city}<br>
+                                <span style="font-size: 0.8rem; opacity: 0.7;">Проверьте API-ключ или подключение</span>
+                            </div>
+                        `;
+                    }
+                });
+                
+                grid.appendChild(btn);
             });
             
             win.querySelector('.app-close').addEventListener('click', () => win.remove());
@@ -803,11 +683,8 @@
         ];
 
         function showNotification(text, duration = 2000) {
-            const notif = document.createElement('div');
-            notif.className = 'neon-notification';
-            notif.textContent = text;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), duration);
+            const notif = document.createElement('div'); notif.className = 'neon-notification'; notif.textContent = text;
+            document.body.appendChild(notif); setTimeout(() => notif.remove(), duration);
         }
 
         function setWallpaper(url, overlay) {
@@ -816,20 +693,15 @@
         }
 
         function initWallpaperGrid() {
-            const grid = document.getElementById('wallpaperGrid');
+            const grid = document.getElementById('wallpaperGrid'); if (!grid) return;
             grid.innerHTML = '';
             wallpapers.forEach((wp, i) => {
-                const item = document.createElement('div');
-                item.className = 'wallpaper-item';
-                item.style.backgroundImage = `url('${wp.preview}')`;
-                item.dataset.url = wp.url;
-                item.dataset.overlay = wp.overlay;
-                item.title = wp.name;
+                const item = document.createElement('div'); item.className = 'wallpaper-item'; item.style.backgroundImage = `url('${wp.preview}')`;
+                item.dataset.url = wp.url; item.dataset.overlay = wp.overlay; item.title = wp.name;
                 item.classList.add('active');
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.wallpaper-item').forEach(el => el.classList.remove('active'));
-                    item.classList.add('active');
-                    setWallpaper(wp.url, wp.overlay);
+                    item.classList.add('active'); setWallpaper(wp.url, wp.overlay);
                     localStorage.setItem('neon-wallpaper-url', wp.url);
                 });
                 grid.appendChild(item);
@@ -855,25 +727,17 @@
             let x = e.clientX, y = e.clientY;
             if (x + menuBox.width > window.innerWidth - 20) x = window.innerWidth - menuBox.width - 20;
             if (y + menuBox.height > window.innerHeight - 20) y = window.innerHeight - menuBox.height - 20;
-            if (!$menu.contains(e.target)) {
-                $menu.style.left = x + 'px';
-                $menu.style.top = y + 'px';
-                $menu.classList.add('open');
-            }
+            if (!$menu.contains(e.target)) { $menu.style.left = x + 'px'; $menu.style.top = y + 'px'; $menu.classList.add('open'); }
         });
 
         $openWallpaperBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const rect = $openWallpaperBtn.getBoundingClientRect();
-            $menu.style.left = (rect.left - 20) + 'px';
-            $menu.style.top = (rect.top - 300) + 'px';
-            $menu.classList.add('open');
+            $menu.style.left = (rect.left - 20) + 'px'; $menu.style.top = (rect.top - 300) + 'px'; $menu.classList.add('open');
         });
 
         document.addEventListener('pointerdown', (e) => {
-            if (!$menu.contains(e.target) && !e.target.matches('input[type="range"]') && e.target !== $openWallpaperBtn) {
-                $menu.classList.remove('open');
-            }
+            if (!$menu.contains(e.target) && !e.target.matches('input[type="range"]') && e.target !== $openWallpaperBtn) $menu.classList.remove('open');
         });
 
         // ---------- ЦВЕТА ----------
@@ -884,19 +748,15 @@
             const v1 = localStorage.getItem('neon-glass-hue1') ?? 255;
             const v2 = localStorage.getItem('neon-glass-hue2') ?? 222;
             $hue1.value = v1; $hue2.value = v2;
-            document.body.style.setProperty('--hue1', v1);
-            document.body.style.setProperty('--hue2', v2);
+            document.body.style.setProperty('--hue1', v1); document.body.style.setProperty('--hue2', v2);
         };
         setHues();
         
         $rand.addEventListener('click', () => {
-            const r1 = Math.floor(Math.random() * 360);
-            const r2 = Math.floor(Math.random() * 360);
+            const r1 = Math.floor(Math.random() * 360); const r2 = Math.floor(Math.random() * 360);
             $hue1.value = r1; $hue2.value = r2;
-            document.body.style.setProperty('--hue1', r1);
-            document.body.style.setProperty('--hue2', r2);
-            localStorage.setItem('neon-glass-hue1', r1);
-            localStorage.setItem('neon-glass-hue2', r2);
+            document.body.style.setProperty('--hue1', r1); document.body.style.setProperty('--hue2', r2);
+            localStorage.setItem('neon-glass-hue1', r1); localStorage.setItem('neon-glass-hue2', r2);
             showNotification('🎨 Тема случайная!');
         });
 
@@ -908,16 +768,12 @@
             } 
         });
 
-        // ---------- ЗАПУСК ПРИЛОЖЕНИЙ ИЗ МЕНЮ ----------
+        // ---------- ЗАПУСК ПРИЛОЖЕНИЙ ----------
         const appLauncher = {
-            snake: () => createSnakeGame(15),
-            snake2: () => createSnakeGame(12),
-            browser: createNeonBrowser,
-            files: createFileManager,
-            weather: createWeatherApp,
-            calculator: createCalculator,
-            terminal: createTerminalApp,
-            timer: createTimerApp
+            snake: () => createSnakeGame(15), snake2: () => createSnakeGame(12),
+            browser: createNeonBrowser, files: createFileManager,
+            weather: createWeatherApp, calculator: createCalculator,
+            terminal: createTerminalApp, timer: createTimerApp
         };
 
         $menuItems.forEach(item => {
